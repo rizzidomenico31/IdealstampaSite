@@ -14,7 +14,9 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 if (process.env.NODE_ENV !== 'production') {
     app.use(cors({
-        origin: 'http://localhost:3000',
+        origin: ['http://localhost:3000',
+        "https://react-frontend-backend.up.railway.app"
+        ],
         credentials: true
     }));
 }
