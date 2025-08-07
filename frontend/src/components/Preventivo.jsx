@@ -78,7 +78,7 @@ export default function Preventivo() {
                 },
                 body: JSON.stringify(formData)
             });
-
+            console.log(backendUrl)
             const result = await response.json();
 
             if (response.ok && result.success) {
