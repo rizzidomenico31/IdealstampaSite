@@ -28,7 +28,7 @@ RUN chmod -R 755 /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Esponi la porta (di default Nginx serve su 80)
-EXPOSE 80
+EXPOSE 443
 
 # Comando di avvio
 CMD ["nginx", "-g", "daemon off;"]
