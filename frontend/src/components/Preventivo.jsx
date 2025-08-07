@@ -69,8 +69,10 @@ export default function Preventivo() {
 
         try {
             // URL del backend - modifica secondo il tuo setup
-            const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || '';
-
+            const backendUrl = import.meta.env.VITE_API_URL || '';
+            console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+            console.log('backendUrl:', backendUrl);
+            console.log('Tutte le env vars:', import.meta.env);
             const response = await fetch(`${backendUrl}/api/preventivo`, {
                 method: 'POST',
                 headers: {
