@@ -650,7 +650,7 @@ export default function Hero() {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-gray-900">Indirizzo</h3>
-                                        <p className="text-gray-600">Via Roma, 123 - 70010 Turi (BA)</p>
+                                        <p className="text-gray-600">Via Dott. Angelo Camposeo, 23 - 70010 Turi (BA)</p>
                                     </div>
                                 </div>
 

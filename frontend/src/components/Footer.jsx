@@ -134,16 +134,6 @@ export default function Footer() {
                                     </svg>
                                 </a>
                                 <a
-                                    href="#"
-                                    className="bg-gray-800 hover:bg-blue-600 p-3 rounded-full transition-colors duration-300 group"
-                                    aria-label="LinkedIn"
-                                >
-                                    <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
-                                        <circle cx="4" cy="4" r="2"/>
-                                    </svg>
-                                </a>
-                                <a
                                     href="https://wa.me/393770802322"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -216,7 +206,7 @@ export default function Footer() {
                                     </div>
                                     <div>
                                         <p className="text-gray-300">
-                                            Via Roma, 123<br />
+                                            Via Dott. Angelo Camposeo, 23<br />
                                             70010 Turi (BA)<br />
                                             Puglia, Italia
                                         </p>
