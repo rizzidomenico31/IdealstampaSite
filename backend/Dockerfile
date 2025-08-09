@@ -1,6 +1,4 @@
 # backend/Dockerfile
-
-# Usa Node.js 18 Alpine come base
 FROM node:18-alpine
 
 # Installa curl per health checks
@@ -16,11 +14,17 @@ RUN adduser -S nextjs -u 1001
 # Copia package.json e package-lock.json
 COPY package*.json ./
 
-# Installa dipendenze
-RUN npm ci --only=production && npm cache clean --force
+# IMPORTANTE: Usa npm install invece di npm ci per evitare problemi
+RUN npm install --production && npm cache clean --force
+
+# Debug: verifica che multer sia installato
+RUN npm list multer || echo "Multer non trovato!"
 
 # Copia il resto del codice
 COPY . .
+
+# Crea cartella uploads
+RUN mkdir -p uploads && chown -R nextjs:nodejs uploads
 
 # Cambia ownership dei file
 RUN chown -R nextjs:nodejs /app

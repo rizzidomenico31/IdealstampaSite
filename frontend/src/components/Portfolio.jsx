@@ -205,7 +205,7 @@ export default function Portfolio() {
             {/* Projects Grid */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredProjects.map((project, index) => (
+                    {filteredProjects.map((project) => (
                         <div
                             key={project.id}
                             className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer"
@@ -353,10 +353,19 @@ export default function Portfolio() {
                                     </p>
                                     <div className="space-y-3">
                                         <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                                            Richiedi Preventivo
+                                            <a href="/preventivo">
+                                                Richiedi Preventivo
+                                            </a>
                                         </button>
                                         <button className="w-full border border-indigo-600 text-indigo-600 py-3 px-6 rounded-lg font-medium hover:bg-indigo-50 transition-colors">
-                                            Contattaci su WhatsApp
+                                            <a
+                                                href="https://wa.me/393770802322"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center text-green-600 font-medium hover:text-green-700 transition-colors"
+                                            >
+                                                Contattaci su WhatsApp
+                                            </a>
                                         </button>
                                     </div>
                                 </div>

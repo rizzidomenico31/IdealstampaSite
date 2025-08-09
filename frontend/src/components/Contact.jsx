@@ -403,7 +403,7 @@ export default function Contact() {
                                     </div>
                                     <div>
                                         <h4 className="font-semibold text-gray-900">Tipografia Idealstampa</h4>
-                                        <p className="text-sm text-gray-600">Via Roma, 123 - 70010 Turi (BA)</p>
+                                        <p className="text-sm text-gray-600">Via Dott. Angelo Camposeo, 23 - 70010 Turi (BA)</p>
                                     </div>
                                 </div>
                             </div>

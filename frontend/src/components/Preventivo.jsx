@@ -1,9 +1,215 @@
 import { useState } from 'react';
 
+// Componente FileUpload integrato
+const FileUploadComponent = ({ onFileChange, hasFile }) => {
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [error, setError] = useState('');
+
+    // Non mostrare il componente se l'utente ha selezionato "No" per i file
+    if (hasFile === 'false') {
+        return null;
+    }
+
+    const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain',
+        'image/jpeg',
+        'image/png',
+        'application/zip',
+        'application/x-rar-compressed'
+    ];
+
+    const getFileTypeLabel = (type) => {
+        const typeMap = {
+            'application/pdf': 'PDF',
+            'application/msword': 'DOC',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+            'text/plain': 'TXT',
+            'image/jpeg': 'JPG',
+            'image/png': 'PNG',
+            'application/zip': 'ZIP',
+            'application/x-rar-compressed': 'RAR'
+        };
+        return typeMap[type] || 'File';
+    };
+
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) {
+            handleFileUpload(files[0]);
+        }
+    };
+
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleFileUpload(file);
+        }
+    };
+
+    const handleFileUpload = (file) => {
+        setError('');
+
+        // Validazione tipo file
+        if (!allowedTypes.includes(file.type)) {
+            setError('Tipo di file non supportato. Formati accettati: PDF, DOC, DOCX, TXT, JPG, PNG, ZIP, RAR');
+            return;
+        }
+
+        // Validazione dimensione file (max 25MB)
+        if (file.size > 25 * 1024 * 1024) {
+            setError('Il file è troppo grande. Dimensione massima: 25MB');
+            return;
+        }
+
+        const fileData = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file
+        };
+
+        setUploadedFile(fileData);
+
+        // Callback al componente genitore
+        if (onFileChange) {
+            onFileChange(fileData);
+        }
+    };
+
+    const removeFile = () => {
+        setUploadedFile(null);
+        setError('');
+        if (onFileChange) {
+            onFileChange(null);
+        }
+    };
+
+    return (
+        <div className="w-full mt-6">
+            <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Carica File <span className="text-gray-500">(opzionale)</span>
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                    Carica qui i tuoi file pronti per la stampa
+                </p>
+            </div>
+
+            {!uploadedFile ? (
+                <div>
+                    <div
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 cursor-pointer ${
+                            isDragging
+                                ? 'border-indigo-400 bg-indigo-50 scale-[1.02]'
+                                : error
+                                    ? 'border-red-300 bg-red-50'
+                                    : 'border-gray-300 hover:border-indigo-300 hover:bg-gray-50'
+                        }`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                    >
+                        <svg className={`mx-auto h-8 w-8 mb-3 ${error ? 'text-red-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <div className="space-y-1">
+                            <p className="text-sm font-medium text-gray-700">
+                                Trascina il file qui o{' '}
+                                <label className="text-indigo-600 hover:text-indigo-700 cursor-pointer underline">
+                                    seleziona dal computer
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        onChange={handleFileSelect}
+                                        accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.zip,.rar"
+                                    />
+                                </label>
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                PDF, DOC, DOCX, TXT, JPG, PNG, ZIP, RAR • Max 25MB
+                            </p>
+                        </div>
+                    </div>
+
+                    {error && (
+                        <div className="mt-2 flex items-center text-sm text-red-600">
+                            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                            {error}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0">
+                                <svg className="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-gray-900 truncate" title={uploadedFile.name}>
+                                    {uploadedFile.name}
+                                </p>
+                                <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                                    <span className="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full font-medium">
+                                        {getFileTypeLabel(uploadedFile.type)}
+                                    </span>
+                                    <span>{formatFileSize(uploadedFile.size)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <button
+                                onClick={removeFile}
+                                className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+                                title="Rimuovi file"
+                            >
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 export default function Preventivo() {
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', null
+    const [submitStatus, setSubmitStatus] = useState(null);
     const [formData, setFormData] = useState({
         // Step 1 - Informazioni base
         nome: '',
@@ -28,6 +234,7 @@ export default function Preventivo() {
         // Step 4 - File e note
         hasFile: '',
         fileInfo: '',
+        uploadedFile: null,
         note: '',
         budget: '',
 
@@ -37,7 +244,7 @@ export default function Preventivo() {
     });
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const {name, value, type, checked} = e.target;
         if (type === 'checkbox') {
             if (name === 'finiture') {
                 setFormData(prev => ({
@@ -47,11 +254,15 @@ export default function Preventivo() {
                         : prev.finiture.filter(f => f !== value)
                 }));
             } else {
-                setFormData(prev => ({ ...prev, [name]: checked }));
+                setFormData(prev => ({...prev, [name]: checked}));
             }
         } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
+            setFormData(prev => ({...prev, [name]: value}));
         }
+    };
+
+    const handleFileChange = (fileData) => {
+        setFormData(prev => ({...prev, uploadedFile: fileData}));
     };
 
     const nextStep = () => {
@@ -68,20 +279,54 @@ export default function Preventivo() {
         setSubmitStatus(null);
 
         try {
-            // URL del backend - modifica secondo il tuo setup
-            const backendUrl = import.meta.env.VITE_API_URL || '';
-            console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
-            console.log('backendUrl:', backendUrl);
-            console.log('Tutte le env vars:', import.meta.env);
+            // Prepara i dati per l'invio con FormData per supportare file upload
+            const formDataToSend = new FormData();
+
+            // Aggiungi tutti i campi del form
+            Object.keys(formData).forEach(key => {
+                if (key === 'uploadedFile' && formData[key]) {
+                    // Aggiungi il file se presente
+                    formDataToSend.append('file', formData[key].file);
+                    formDataToSend.append('fileName', formData[key].name);
+                } else if (key === 'finiture') {
+                    // Aggiungi array come JSON string
+                    formDataToSend.append(key, JSON.stringify(formData[key]));
+                } else if (key !== 'uploadedFile') {
+                    // Aggiungi tutti gli altri campi, anche se vuoti
+                    const value = formData[key];
+                    if (value !== null && value !== undefined) {
+                        formDataToSend.append(key, value);
+                    }
+                }
+            });
+
+            console.log('📝 Dati FormData preparati per invio');
+            // Log per debug (non mostra il file)
+            for (let [key, value] of formDataToSend.entries()) {
+                if (key !== 'file') {
+                    console.log(`${key}:`, value);
+                }
+            }
+
+            // URL del backend
+            const backendUrl = import.meta.env.REACT_APP_API_URL || '';
             const response = await fetch(`${backendUrl}/api/preventivo`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
+                body: formDataToSend
             });
-            console.log(backendUrl)
-            const result = await response.json();
+
+            let result;
+            const contentType = response.headers.get('content-type');
+
+            // Controlla se la risposta è JSON
+            if (contentType && contentType.includes('application/json')) {
+                result = await response.json();
+            } else {
+                // Se non è JSON, è probabilmente una pagina di errore HTML
+                const text = await response.text();
+                console.error('Risposta non JSON:', text);
+                throw new Error('Errore del server. La richiesta potrebbe essere troppo grande.');
+            }
 
             if (response.ok && result.success) {
                 setSubmitStatus('success');
@@ -90,15 +335,20 @@ export default function Preventivo() {
                     nome: '', cognome: '', email: '', telefono: '', azienda: '',
                     tipoProgetto: '', servizio: '', urgenza: '',
                     quantita: '', formato: '', pagine: '', colori: '', carta: '', finiture: [],
-                    hasFile: '', fileInfo: '', note: '', budget: '',
+                    hasFile: '', fileInfo: '', uploadedFile: null, note: '', budget: '',
                     privacy: false, newsletter: false
                 });
                 setCurrentStep(1);
 
                 // Scroll to top per mostrare messaggio di successo
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({top: 0, behavior: 'smooth'});
 
             } else {
+                // Log degli errori dettagliati per debug
+                console.error('Errore validazione:', result);
+                if (result.errors && Array.isArray(result.errors)) {
+                    console.error('Errori specifici:', result.errors);
+                }
                 throw new Error(result.message || 'Errore durante l\'invio');
             }
 
@@ -112,23 +362,38 @@ export default function Preventivo() {
 
     const progressPercentage = (currentStep / 4) * 100;
 
-    // Stesso contenuto delle costanti servizi, tipiProgetto, etc...
+    // Costanti per servizi e tipi progetto
     const servizi = [
-        { id: 'offset', name: 'Stampa Offset', icon: '🖨️', desc: 'Ideale per grandi tirature' },
-        { id: 'digitale', name: 'Stampa Digitale', icon: '💻', desc: 'Perfetta per piccole quantità' },
-        { id: 'grande-formato', name: 'Grande Formato', icon: '🎪', desc: 'Banner, striscioni, insegne' },
-        { id: 'packaging', name: 'Packaging', icon: '📦', desc: 'Scatole e contenitori personalizzati' },
-        { id: 'editoria', name: 'Editoria', icon: '📚', desc: 'Libri, cataloghi, riviste' },
-        { id: 'finiture', name: 'Finiture Speciali', icon: '✨', desc: 'Verniciature, rilievi, oro/argento' }
+        {id: 'offset', name: 'Stampa Offset', icon: '🖨️', desc: 'Ideale per grandi tirature'},
+        {id: 'digitale', name: 'Stampa Digitale', icon: '💻', desc: 'Perfetta per piccole quantità'},
+        {id: 'grande-formato', name: 'Grande Formato', icon: '🎪', desc: 'Banner, striscioni, insegne'},
+        {id: 'packaging', name: 'Packaging', icon: '📦', desc: 'Scatole e contenitori personalizzati'},
+        {id: 'editoria', name: 'Editoria', icon: '📚', desc: 'Libri, cataloghi, riviste'},
+        {id: 'finiture', name: 'Finiture Speciali', icon: '✨', desc: 'Verniciature, rilievi, oro/argento'}
     ];
 
     const tipiProgetto = [
-        { id: 'business', name: 'Materiale Aziendale', icon: '💼', items: ['Biglietti da visita', 'Brochure', 'Cataloghi', 'Carta intestata'] },
-        { id: 'marketing', name: 'Materiale Promozionale', icon: '📢', items: ['Volantini', 'Locandine', 'Banner', 'Gadget'] },
-        { id: 'eventi', name: 'Eventi Speciali', icon: '🎉', items: ['Inviti matrimonio', 'Partecipazioni', 'Menu', 'Programmi'] },
-        { id: 'editoria', name: 'Prodotti Editoriali', icon: '📖', items: ['Libri', 'Riviste', 'Tesi', 'Manuali'] },
-        { id: 'packaging', name: 'Packaging', icon: '📦', items: ['Scatole', 'Etichette', 'Shopper', 'Contenitori'] },
-        { id: 'altro', name: 'Altro Progetto', icon: '🎯', items: ['Progetto personalizzato'] }
+        {
+            id: 'business',
+            name: 'Materiale Aziendale',
+            icon: '💼',
+            items: ['Biglietti da visita', 'Brochure', 'Cataloghi', 'Carta intestata']
+        },
+        {
+            id: 'marketing',
+            name: 'Materiale Promozionale',
+            icon: '📢',
+            items: ['Volantini', 'Locandine', 'Banner', 'Gadget']
+        },
+        {
+            id: 'eventi',
+            name: 'Eventi Speciali',
+            icon: '🎉',
+            items: ['Inviti matrimonio', 'Partecipazioni', 'Menu', 'Programmi']
+        },
+        {id: 'editoria', name: 'Prodotti Editoriali', icon: '📖', items: ['Libri', 'Riviste', 'Tesi', 'Manuali']},
+        {id: 'packaging', name: 'Packaging', icon: '📦', items: ['Scatole', 'Etichette', 'Shopper', 'Contenitori']},
+        {id: 'altro', name: 'Altro Progetto', icon: '🎯', items: ['Progetto personalizzato']}
     ];
 
     const formatoOpzioni = [
@@ -144,15 +409,15 @@ export default function Preventivo() {
     ];
 
     const finitureOpzioni = [
-        { id: 'plastificazione-lucida', name: 'Plastificazione Lucida' },
-        { id: 'plastificazione-opaca', name: 'Plastificazione Opaca' },
-        { id: 'verniciatura-uv', name: 'Verniciatura UV Selettiva' },
-        { id: 'stampa-oro', name: 'Stampa Oro a Caldo' },
-        { id: 'stampa-argento', name: 'Stampa Argento a Caldo' },
-        { id: 'rilievo-secco', name: 'Rilievo a Secco' },
-        { id: 'fustellatura', name: 'Fustellatura' },
-        { id: 'cordonatura', name: 'Cordonatura' },
-        { id: 'rilegatura', name: 'Rilegatura' }
+        {id: 'plastificazione-lucida', name: 'Plastificazione Lucida'},
+        {id: 'plastificazione-opaca', name: 'Plastificazione Opaca'},
+        {id: 'verniciatura-uv', name: 'Verniciatura UV Selettiva'},
+        {id: 'stampa-oro', name: 'Stampa Oro a Caldo'},
+        {id: 'stampa-argento', name: 'Stampa Argento a Caldo'},
+        {id: 'rilievo-secco', name: 'Rilievo a Secco'},
+        {id: 'fustellatura', name: 'Fustellatura'},
+        {id: 'cordonatura', name: 'Cordonatura'},
+        {id: 'rilegatura', name: 'Rilegatura'}
     ];
 
     return (
@@ -160,10 +425,12 @@ export default function Preventivo() {
 
             {/* Success/Error Messages */}
             {submitStatus === 'success' && (
-                <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl z-50 max-w-md">
+                <div
+                    className="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl z-50 max-w-md">
                     <div className="flex items-center">
                         <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <div>
                             <p className="font-semibold">Richiesta Inviata!</p>
@@ -177,7 +444,8 @@ export default function Preventivo() {
                 <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-xl z-50 max-w-md">
                     <div className="flex items-center">
                         <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                         </svg>
                         <div>
                             <p className="font-semibold">Errore Invio</p>
@@ -202,11 +470,12 @@ export default function Preventivo() {
                         <div className="flex justify-between items-center mb-4">
                             {[1, 2, 3, 4].map((step) => (
                                 <div key={step} className="flex items-center">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
-                                        step <= currentStep
-                                            ? 'bg-white text-indigo-600 shadow-lg'
-                                            : 'bg-indigo-500 text-indigo-200'
-                                    }`}>
+                                    <div
+                                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
+                                            step <= currentStep
+                                                ? 'bg-white text-indigo-600 shadow-lg'
+                                                : 'bg-indigo-500 text-indigo-200'
+                                        }`}>
                                         {step < currentStep ? '✓' : step}
                                     </div>
                                     {step < 4 && (
@@ -220,7 +489,7 @@ export default function Preventivo() {
                         <div className="w-full bg-indigo-400 rounded-full h-2">
                             <div
                                 className="bg-white h-2 rounded-full transition-all duration-500 ease-in-out"
-                                style={{ width: `${progressPercentage}%` }}
+                                style={{width: `${progressPercentage}%`}}
                             ></div>
                         </div>
                         <p className="text-blue-100 text-sm mt-2">
@@ -240,7 +509,8 @@ export default function Preventivo() {
                         {currentStep === 1 && (
                             <div className="p-8">
                                 <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
+                                    <div
+                                        className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
                                         👤
                                     </div>
                                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -329,11 +599,12 @@ export default function Preventivo() {
                             </div>
                         )}
 
-                        {/* Gli altri step rimangono identici... */}
+                        {/* Step 2 - Tipo di Progetto */}
                         {currentStep === 2 && (
                             <div className="p-8">
                                 <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
+                                    <div
+                                        className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
                                         🎯
                                     </div>
                                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -353,14 +624,15 @@ export default function Preventivo() {
                                                     ? 'border-indigo-500 bg-indigo-50 shadow-lg transform scale-105'
                                                     : 'border-gray-200 hover:border-indigo-300'
                                             }`}
-                                            onClick={() => setFormData(prev => ({ ...prev, tipoProgetto: tipo.id }))}
+                                            onClick={() => setFormData(prev => ({...prev, tipoProgetto: tipo.id}))}
                                         >
                                             <div className="text-3xl mb-3 text-center">{tipo.icon}</div>
                                             <h3 className="font-semibold text-gray-900 mb-2 text-center">{tipo.name}</h3>
                                             <ul className="text-sm text-gray-600 space-y-1">
                                                 {tipo.items.slice(0, 3).map((item, idx) => (
                                                     <li key={idx} className="flex items-center">
-                                                        <span className="w-1 h-1 bg-indigo-400 rounded-full mr-2"></span>
+                                                            <span
+                                                                className="w-1 h-1 bg-indigo-400 rounded-full mr-2"></span>
                                                         {item}
                                                     </li>
                                                 ))}
@@ -387,7 +659,10 @@ export default function Preventivo() {
                                                                 ? 'border-indigo-500 bg-indigo-50'
                                                                 : 'border-gray-200 hover:border-indigo-300'
                                                         }`}
-                                                        onClick={() => setFormData(prev => ({ ...prev, servizio: servizio.id }))}
+                                                        onClick={() => setFormData(prev => ({
+                                                            ...prev,
+                                                            servizio: servizio.id
+                                                        }))}
                                                     >
                                                         <div className="flex items-center space-x-3">
                                                             <span className="text-xl">{servizio.icon}</span>
@@ -413,9 +688,12 @@ export default function Preventivo() {
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                             >
                                                 <option value="">Seleziona la tempistica</option>
-                                                <option value="urgente">Urgente (1-3 giorni) - Sovrapprezzo 20%</option>
+                                                <option value="urgente">Urgente (1-3 giorni) - Sovrapprezzo 20%
+                                                </option>
                                                 <option value="normale">Normale (5-7 giorni)</option>
-                                                <option value="rilassato">Non ho fretta (10-15 giorni) - Sconto 10%</option>
+                                                <option value="rilassato">Non ho fretta (10-15 giorni) - Sconto
+                                                    10%
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -423,12 +701,12 @@ export default function Preventivo() {
                             </div>
                         )}
 
-                        {/* Step 3 e 4 continuano come prima... ma aggiungo solo la parte Navigation e Submit */}
                         {/* Step 3: Dettagli Tecnici */}
                         {currentStep === 3 && (
                             <div className="p-8">
                                 <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
+                                    <div
+                                        className="w-16 h-16 bg-gradient-to-r from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
                                         ⚙️
                                     </div>
                                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -536,7 +814,8 @@ export default function Preventivo() {
                                         </label>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                             {finitureOpzioni.map((finitura) => (
-                                                <label key={finitura.id} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                                <label key={finitura.id}
+                                                       className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
                                                     <input
                                                         type="checkbox"
                                                         name="finiture"
@@ -554,11 +833,12 @@ export default function Preventivo() {
                             </div>
                         )}
 
-                        {/* Step 4: File e Note */}
+                        {/* Step 4: File e Note - AGGIORNATO */}
                         {currentStep === 4 && (
                             <div className="p-8">
                                 <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
+                                    <div
+                                        className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4">
                                         📎
                                     </div>
                                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -600,7 +880,14 @@ export default function Preventivo() {
                                         </div>
                                     </div>
 
-                                    {formData.hasFile === 'true' && (
+                                    {/* NUOVO: Componente di Upload File */}
+                                    <FileUploadComponent
+                                        onFileChange={handleFileChange}
+                                        hasFile={formData.hasFile}
+                                    />
+
+                                    {/* Campo descrizione file - mostrato solo se non ha caricato file ma ha detto di averli */}
+                                    {formData.hasFile === 'true' && !formData.uploadedFile && (
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Informazioni sui file
@@ -614,7 +901,8 @@ export default function Preventivo() {
                                                 placeholder="Descrivi i file che hai (formato, risoluzione, etc.) o indica come preferisci inviarli"
                                             />
                                             <p className="text-sm text-gray-500 mt-2">
-                                                💡 Potrai inviarci i file via email o WhatsApp dopo aver ricevuto il preventivo
+                                                💡 Potrai inviarci i file via email o WhatsApp dopo aver ricevuto il
+                                                preventivo
                                             </p>
                                         </div>
                                     )}
@@ -665,7 +953,8 @@ export default function Preventivo() {
                                             />
                                             <span className="text-sm text-gray-700">
                                                 Accetto il trattamento dei dati personali secondo la{' '}
-                                                <a href="/privacy" className="text-indigo-600 hover:text-indigo-700 underline">
+                                                <a href="/privacy"
+                                                   className="text-indigo-600 hover:text-indigo-700 underline">
                                                     Privacy Policy
                                                 </a> *
                                             </span>
@@ -689,7 +978,8 @@ export default function Preventivo() {
                         )}
 
                         {/* Navigation Buttons */}
-                        <div className="px-8 py-6 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div
+                            className="px-8 py-6 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
                             <div className="flex items-center space-x-4">
                                 {currentStep > 1 && (
                                     <button
@@ -698,8 +988,10 @@ export default function Preventivo() {
                                         disabled={isSubmitting}
                                         className="flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-full font-medium hover:bg-gray-50 transition-all duration-200 disabled:opacity-50"
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M15 19l-7-7 7-7"/>
                                         </svg>
                                         <span>Indietro</span>
                                     </button>
@@ -720,8 +1012,10 @@ export default function Preventivo() {
                                         className="flex items-center space-x-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200"
                                     >
                                         <span>Continua</span>
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                  d="M9 5l7 7-7 7"/>
                                         </svg>
                                     </button>
                                 ) : (
@@ -732,16 +1026,21 @@ export default function Preventivo() {
                                     >
                                         {isSubmitting ? (
                                             <>
-                                                <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                <svg className="animate-spin w-5 h-5" fill="none"
+                                                     viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10"
+                                                            stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor"
+                                                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                 </svg>
                                                 <span>Invio in corso...</span>
                                             </>
                                         ) : (
                                             <>
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor"
+                                                     viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                                          strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                                 </svg>
                                                 <span>Invia Richiesta</span>
                                             </>
@@ -752,7 +1051,6 @@ export default function Preventivo() {
                         </div>
                     </form>
                 </div>
-                {/* Resto del componente continua come prima... */}
             </div>
         </div>
     );
