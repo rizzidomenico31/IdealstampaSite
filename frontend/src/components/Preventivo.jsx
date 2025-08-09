@@ -308,8 +308,9 @@ export default function Preventivo() {
                 }
             }
 
-            // URL del backend
-            const backendUrl = import.meta.env.REACT_APP_API_URL || '';
+
+            // Nel frontend, cambia:
+            const backendUrl = import.meta.env.VITE_API_URL || 'https://nodejs-backend.up.railway.app/';
             const response = await fetch(`${backendUrl}/api/preventivo`, {
                 method: 'POST',
                 body: formDataToSend
