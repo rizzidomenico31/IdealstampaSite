@@ -71,13 +71,13 @@ const PasswordProtection = ({ children }) => {
             <div className="max-w-md w-full">
                 {/* Logo/Header */}
                 <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl border">
+
                         <img
                             className="h-16 w-auto object-contain filter brightness-0 invert"
                             src="/logo_ideal.png"
                             alt="Idealstampa Logo"
                         />
-                    </div>
+
                     <p className="text-gray-600">
                         Sito in sviluppo - Accesso riservato
                     </p>
