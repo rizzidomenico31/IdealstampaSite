@@ -72,7 +72,7 @@ const PasswordProtection = ({ children }) => {
                 {/* Logo/Header */}
                 <div className="text-center mb-8">
 
-                    <img className="h-16 w-auto object-contain transition-all duration-300 hover:scale-105"
+                    <img className="h-20 w-auto content-center transition-all duration-300 hover:scale-105"
                          src="/logo_ideal.png"
                          alt="Idealstampa Logo"/>
 
