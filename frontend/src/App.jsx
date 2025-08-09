@@ -7,9 +7,10 @@ import Portfolio from "./components/Portfolio.jsx";
 import Contact from "./components/Contact.jsx";
 import Servizi from "./components/Servizi.jsx";
 import Preventivo from "./components/Preventivo.jsx";
+import PasswordProtection from "./components/PasswordProtection.jsx";
 export default function App() {
     return (
-        <>
+        <PasswordProtection>
 
             <Routes>
                 <Route path="/" element={<Nav />} >
@@ -23,6 +24,6 @@ export default function App() {
                 </Route>
 
             </Routes>
-        </>
+        </PasswordProtection>
     )
 }
