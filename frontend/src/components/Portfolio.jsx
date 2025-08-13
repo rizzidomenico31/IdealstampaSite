@@ -46,16 +46,16 @@ export default function Portfolio() {
         },
         {
             id: 3,
-            title: "Banner Pubblicitario Esterno",
-            category: "grande-formato",
+            title: "Timbri Autoinchiostranti",
+            category: "digitale",
             image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-            description: "Striscione pubblicitario per evento promozionale, resistente agli agenti atmosferici.",
+            description: "Timbro autoinchiostrante per azienda con stampa ad alta definizione.",
             details: {
-                client: "Centro Commerciale Europa",
-                format: "6x2 metri",
-                material: "PVC banner 510g, resistente UV",
+                client: "Azienda XYZ",
+                format: "EOS30",
+                material: "Plastica",
                 quantity: "3 pezzi",
-                finishing: "Occhielli per montaggio, saldature"
+                finishing: "Ricarica inchiostro gratuita se necessaria"
             },
             tags: ["Banner", "Grande Formato", "Esterno"]
         },
