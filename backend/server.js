@@ -63,26 +63,17 @@ const upload = multer({
 // Middleware di sicurezza
 app.use(helmet());
 
-// CORS configuration
-if (process.env.NODE_ENV !== 'production') {
-    app.use(cors({
-        origin: [
-            'http://localhost:3000',
-            'http://localhost:3001',
-            'https://react-frontend-backend.up.railway.app',
-            'https://g6ts4w9q.up.railway.app'
-        ],
-        credentials: true
-    }));
-} else {
-    app.use(cors({
-        origin: [
-            'https://www.idealstampa.com',
-            'https://idealstampa.com',
-            process.env.FRONTEND_URL || 'https://react-frontend-backend.up.railway.app'],
-        credentials: true
-    }));
-}
+// CORS per tutti gli ambienti
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://www.idealstampa.com',
+        'https://idealstampa.com',
+        'https://react-frontend-backend.up.railway.app'
+    ],
+    credentials: true
+}));
 
 // Rate limiting - massimo 10 richieste per IP ogni 15 minuti per upload file
 const limiter = rateLimit({
