@@ -69,7 +69,8 @@ if (process.env.NODE_ENV !== 'production') {
         origin: [
             'http://localhost:3000',
             'http://localhost:3001',
-            'https://react-frontend-backend.up.railway.app'
+            'https://react-frontend-backend.up.railway.app',
+            'https://d59z90bj.up.railway.app'
         ],
         credentials: true
     }));
