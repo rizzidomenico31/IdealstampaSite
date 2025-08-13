@@ -76,7 +76,10 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 } else {
     app.use(cors({
-        origin: process.env.FRONTEND_URL || 'https://react-frontend-backend.up.railway.app',
+        origin: [
+            'https://www.idealstampa.com',
+            'https://idealstampa.com',
+            process.env.FRONTEND_URL || 'https://react-frontend-backend.up.railway.app'],
         credentials: true
     }));
 }

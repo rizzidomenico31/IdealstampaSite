@@ -310,7 +310,7 @@ export default function Preventivo() {
 
 
             // Nel frontend, cambia:
-            const backendUrl = import.meta.env.VITE_API_URL || 'nodejs-p9se-production.up.railway.app';
+            const backendUrl = import.meta.env.VITE_API_URL || 'https://nodejs-p9se-production.up.railway.app';
             const response = await fetch(`${backendUrl}/api/preventivo`, {
                 method: 'POST',
                 body: formDataToSend
