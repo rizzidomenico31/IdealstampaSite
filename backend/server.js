@@ -70,7 +70,7 @@ if (process.env.NODE_ENV !== 'production') {
             'http://localhost:3000',
             'http://localhost:3001',
             'https://react-frontend-backend.up.railway.app',
-            'https://d59z90bj.up.railway.app'
+            'https://g6ts4w9q.up.railway.app'
         ],
         credentials: true
     }));
