@@ -614,12 +614,10 @@ app.use((error, req, res, next) => {
 });
 
 // Avvia il server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server avviato sulla porta ${PORT}`);
-    console.log(`📧 Endpoint preventivi: http://localhost:${PORT}/api/preventivo`);
-    console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
-    console.log(`📎 Upload file: ATTIVO (max 25MB)`);
-    console.log(`🔒 Trust proxy: ${JSON.stringify(app.get('trust proxy'))}`);
+    console.log(`📧 Endpoint preventivi: http://0.0.0.0:${PORT}/api/preventivo`);
+    console.log(`🏥 Health check: http://0.0.0.0:${PORT}/api/health`);
 });
 
 module.exports = app;
