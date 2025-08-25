@@ -29,15 +29,6 @@ const Page404 = () => {
         <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex items-center justify-center px-4">
             <div className="max-w-2xl mx-auto text-center">
 
-                {/* Logo */}
-                <div className="mb-8">
-                    <img
-                        className="h-16 w-auto mx-auto transition-all duration-300 hover:scale-105"
-                        src="/logo_ideal.png"
-                        alt="Idealstampa Logo"
-                    />
-                </div>
-
                 {/* Numero 404 grande */}
                 <div className="mb-8">
                     <h1 className="text-9xl font-bold text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text animate-pulse">
