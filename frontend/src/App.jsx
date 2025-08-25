@@ -8,6 +8,7 @@ import Contact from "./components/Contact.jsx";
 import Servizi from "./components/Servizi.jsx";
 import Preventivo from "./components/Preventivo.jsx";
 import PasswordProtection from "./components/PasswordProtection.jsx";
+import NotFound from "./components/404.jsx";
 export default function App() {
     return (
         <PasswordProtection>
@@ -20,7 +21,7 @@ export default function App() {
                     <Route path="/contatti" element={<Contact />} />
                     <Route path="/servizi" element={<Servizi />} />
                     <Route path="/preventivo" element={<Preventivo />} />
-
+                    <Route path="*" element={<NotFound />} />
                 </Route>
 
             </Routes>
