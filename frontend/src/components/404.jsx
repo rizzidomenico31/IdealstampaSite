@@ -150,10 +150,6 @@ const Page404 = () => {
                     </p>
                 </div>
 
-                {/* Footer */}
-                <div className="mt-12 text-center text-sm text-gray-400">
-                    <p>© 2025 Idealstampa - Dal 1995 al vostro servizio</p>
-                </div>
             </div>
         </div>
     );
