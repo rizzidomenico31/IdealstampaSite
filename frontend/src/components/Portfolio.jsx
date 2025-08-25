@@ -357,16 +357,17 @@ export default function Portfolio() {
                                                 Richiedi Preventivo
                                         </button>
                                         </a>
+
+                                        <a
+                                            href="https://wa.me/393770802322"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center text-green-600 font-medium hover:text-green-700 transition-colors"
+                                        >
                                         <button className="w-full border border-indigo-600 text-indigo-600 py-3 px-6 rounded-lg font-medium hover:bg-indigo-50 transition-colors">
-                                            <a
-                                                href="https://wa.me/393770802322"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center text-green-600 font-medium hover:text-green-700 transition-colors"
-                                            >
                                                 Contattaci su WhatsApp
-                                            </a>
                                         </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
