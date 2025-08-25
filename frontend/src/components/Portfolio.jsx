@@ -352,11 +352,11 @@ export default function Portfolio() {
                                         Contattaci per discutere del tuo progetto e ricevere un preventivo personalizzato.
                                     </p>
                                     <div className="space-y-3">
-                                        <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                                            <a href="/preventivo">
+                                        <a href="/preventivo">
+                                            <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
                                                 Richiedi Preventivo
-                                            </a>
                                         </button>
+                                        </a>
                                         <button className="w-full border border-indigo-600 text-indigo-600 py-3 px-6 rounded-lg font-medium hover:bg-indigo-50 transition-colors">
                                             <a
                                                 href="https://wa.me/393770802322"
