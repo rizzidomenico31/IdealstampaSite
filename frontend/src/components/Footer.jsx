@@ -68,7 +68,7 @@ export default function Footer() {
         { name: 'Privacy Policy', href: '/privacy' },
         { name: 'Cookie Policy', href: '/cookies' },
         { name: 'Termini e Condizioni', href: '/termini' },
-        { name: 'P.IVA: 12345678901', href: '#' },
+        { name: 'P.IVA: 04731500726', href: '#' },
     ];
 
     return (
