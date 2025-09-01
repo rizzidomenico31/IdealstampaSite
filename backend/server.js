@@ -94,9 +94,9 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Configurazione Nodemailer
 const transporter = nodemailer.createTransport({
-    host: 'smtp.aruba.it',
-    port: 465,
-    secure: true,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: false,
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
