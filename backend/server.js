@@ -103,6 +103,13 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+console.log('🔍 SMTP Config:', {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER ? '***@' + process.env.SMTP_USER.split('@')[1] : 'MISSING',
+    pass: process.env.SMTP_PASS ? '***' : 'MISSING'
+});
+
 // Verificare la configurazione email all'avvio
 transporter.verify(function (error, success) {
     if (error) {
