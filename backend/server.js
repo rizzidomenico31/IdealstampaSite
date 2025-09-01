@@ -93,13 +93,16 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Configurazione Nodemailer
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: process.env.SMTP_PORT || 587,
-    secure: false, // true per 465, false per altri ports
+const transporter = nodemailer.createTransporter({
+    host: 'smtps.aruba.it',
+    port: 465,
+    secure: true, // SSL
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
+        user: process.env.SMTP_USER, // preventivi@idealstampa.com
+        pass: process.env.SMTP_PASS  // password email Aruba
+    },
+    tls: {
+        rejectUnauthorized: false // A volte necessario per Aruba
     }
 });
 
