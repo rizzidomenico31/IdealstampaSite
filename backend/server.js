@@ -95,15 +95,17 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Configurazione Nodemailer
 const transporter = nodemailer.createTransport({
     host: 'smtps.aruba.it',
-    port: 587,
-    secure: false, // SSL
+    port: 465,
+    secure: true,
     auth: {
-        user: process.env.SMTP_USER, // preventivi@idealstampa.com
-        pass: process.env.SMTP_PASS  // password email Aruba
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
     },
-    tls: {
-        rejectUnauthorized: false // A volte necessario per Aruba
-    }
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 10000,
+    debug: true, // Abilita log dettagliati
+    logger: true
 });
 
 console.log('🔍 SMTP Config:', {
