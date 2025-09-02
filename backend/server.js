@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const path = require('path');
 const fs = require('fs').promises;
+const sgTransport = require('nodemailer-sendgrid');
 require('dotenv').config();
 
 const app = express();
@@ -93,6 +94,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Configurazione Nodemailer
+/*
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -107,6 +109,12 @@ const transporter = nodemailer.createTransport({
     debug: true, // Abilita log dettagliati
     logger: true
 });
+*/
+const transporter = nodemailer.createTransport(
+    sgTransport({
+        apiKey: process.env.SENDGRID_API_KEY,
+    })
+);
 
 console.log('🔍 SMTP Config:', {
     host: process.env.SMTP_HOST,
