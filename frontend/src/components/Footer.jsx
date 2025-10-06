@@ -254,29 +254,6 @@ export default function Footer() {
                             </div>
                         </div>
                     </div>
-
-                    {/* Newsletter Section */}
-                    <div className="border-t border-gray-800 pt-8 mb-8">
-                        <div className="max-w-md mx-auto lg:mx-0">
-                            <h3 className="text-lg font-semibold mb-4 text-white flex items-center justify-center lg:justify-start">
-                                <span className="mr-2">📧</span>
-                                Resta Aggiornato
-                            </h3>
-                            <p className="text-gray-300 mb-4 text-center lg:text-left">
-                                Iscriviti alla nostra newsletter per ricevere offerte esclusive e novità.
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-3">
-                                <input
-                                    type="email"
-                                    placeholder="La tua email"
-                                    className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                />
-                                <button className="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-lg font-medium transition-colors whitespace-nowrap">
-                                    Iscriviti
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Bottom Bar */}
