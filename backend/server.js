@@ -521,6 +521,7 @@ app.post('/api/preventivo', upload.single('file'), validatePreventivo, async (re
         }
 
         // Opzioni email per l'azienda
+        /*
         const mailOptionsCompany = {
             from: `"${formData.nome} ${formData.cognome}" <${process.env.SMTP_USER}>`,
             to: process.env.COMPANY_EMAIL || process.env.SMTP_USER,
@@ -546,7 +547,7 @@ app.post('/api/preventivo', upload.single('file'), validatePreventivo, async (re
 
         console.log('✅ Email inviata all\'azienda:', companyResult.messageId);
         console.log('✅ Conferma inviata al cliente:', clientResult.messageId);
-
+*/
         // Risposta di successo
         res.status(200).json({
             success: true,
