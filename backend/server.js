@@ -116,6 +116,15 @@ const transporter = nodemailer.createTransport(
     })
 );
 */
+//verifico funzionamento mailer
+transporter.verify(function (error, success) {
+    if (error) {
+      console.error('❌ Errore configurazione SMTP:', error);
+    } else {
+      console.log('✅ SMTP Aruba pronto per inviare messaggi');
+    }
+  });
+  
 console.log('🔍 SMTP Config:', {
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
