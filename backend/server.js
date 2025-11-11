@@ -94,7 +94,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Configurazione Nodemailer
-/*
+
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -109,13 +109,13 @@ const transporter = nodemailer.createTransport({
     debug: true, // Abilita log dettagliati
     logger: true
 });
-*/
+/*
 const transporter = nodemailer.createTransport(
     sgTransport({
         apiKey: process.env.SENDGRID_API_KEY,
     })
 );
-
+*/
 console.log('🔍 SMTP Config:', {
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -547,6 +547,7 @@ app.post('/api/preventivo', upload.single('file'), validatePreventivo, async (re
 
         console.log('✅ Email inviata all\'azienda:', companyResult.messageId);
         console.log('✅ Conferma inviata al cliente:', clientResult.messageId);
+
         // Risposta di successo
         res.status(200).json({
             success: true,
