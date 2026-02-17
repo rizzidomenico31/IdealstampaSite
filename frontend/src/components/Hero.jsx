@@ -39,8 +39,8 @@ export default function Hero() {
     const stats = [
         { number: '30+', label: 'Anni di Esperienza', icon: '🏆' },
         { number: '10K+', label: 'Progetti Realizzati', icon: '📋' },
-        { number: '500+', label: 'Clienti Soddisfatti', icon: '😊' },
-        { number: '24h', label: 'Tempo di Risposta', icon: '⚡' },
+        { number: '500+', label: 'Clienti che ci Scelgono', icon: '😊' },
+        { number: '24h', label: 'Risposta Garantita', icon: '⚡' },
     ];
 
     const services = [

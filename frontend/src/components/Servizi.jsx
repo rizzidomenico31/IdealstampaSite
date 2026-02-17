@@ -171,28 +171,26 @@ export default function Servizi() {
     const processSteps = [
         {
             step: "01",
-            title: "Consulenza",
-            description: "Analizziamo il tuo progetto e ti consigliamo la soluzione migliore"
+            title: "Consulenza Iniziale",
+            description: "Partiamo dall’ascolto. Analizziamo le tue esigenze, il budget e gli obiettivi per individuare la soluzione di stampa più adatta."
         },
         {
             step: "02",
-            title: "Preventivo",
-            description: "Ricevi un preventivo dettagliato e trasparente entro 24 ore"
+            title: "Preventivo & File",
+            description: "Ricevi un preventivo chiaro e dettagliato. Controlliamo e ottimizziamo i file per assicurare una\n" +
+                "resa di stampa perfetta."
         },
         {
             step: "03",
-            title: "Preparazione",
-            description: "Ottimizziamo i file e prepariamo tutto per la stampa"
+            title: "Prova & Produzione",
+            description: "Ti forniamo una prova di stampa (digitale o fisica). Dopo la tua approvazione, avviamo la\n" +
+                "produzione con controllo qualità costante."
         },
         {
             step: "04",
-            title: "Produzione",
-            description: "Stampiamo con attenzione ai dettagli e controllo qualità"
-        },
-        {
-            step: "05",
-            title: "Consegna",
-            description: "Confezioniamo e consegniamo il tuo progetto nei tempi concordati"
+            title: "Finiture & Consegna",
+            description: "Completiamo il lavoro con le finiture richieste, verifichiamo ogni dettaglio e consegniamo\n" +
+                "puntualmente."
         }
     ];
 
@@ -316,11 +314,11 @@ export default function Servizi() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                            Il Nostro Processo
+                            Processo Produttivo
                         </h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Ogni progetto segue un processo strutturato che garantisce qualità,
-                            trasparenza e rispetto dei tempi di consegna.
+                            Ogni progetto segue un processo chiaro che ci permette di garantire qualità, tempi certi e
+                            risultati impeccabili.
                         </p>
                     </div>
 
