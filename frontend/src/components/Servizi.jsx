@@ -322,7 +322,7 @@ export default function Servizi() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         {processSteps.map((step, index) => (
                             <div key={index} className="relative text-center group">
                                 {/* Connection line */}
