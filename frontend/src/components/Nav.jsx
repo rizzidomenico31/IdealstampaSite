@@ -10,7 +10,6 @@ export default function Nav() {
         message: ''
     });
 
-    // Funzione per calcolare lo stato dell'attività
     const calculateBusinessStatus = () => {
         const now = new Date();
         const currentDay = now.getDay();
@@ -45,7 +44,6 @@ export default function Nav() {
         setBusinessStatus({ isOpen, message });
     };
 
-    // Gestione scroll per navbar trasparente
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
@@ -62,7 +60,6 @@ export default function Nav() {
         };
     }, []);
 
-    // Chiudi menu quando si clicca su un link
     const handleLinkClick = () => {
         setIsMenuOpen(false);
     };
@@ -76,13 +73,12 @@ export default function Nav() {
     ];
 
     return (
-        <div className="bg-gradient-to-b from-[#F5F7FF] via-[#fffbee] to-[#E6EFFF] min-h-screen">
+        <div className="bg-gradient-to-b from-[#F0FAFA] via-[#fffbee] to-[#E0F5F5] min-h-screen">
 
-            {/* Top Bar con Status */}
+            {/* Top Bar */}
             <div className="bg-white/80 backdrop-blur-sm border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between py-2 text-sm">
-                        {/* Status Business */}
                         <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${
                             businessStatus.isOpen
                                 ? 'bg-green-100 text-green-800 border border-green-200'
@@ -94,11 +90,10 @@ export default function Nav() {
                             <span className="font-medium">{businessStatus.message}</span>
                         </div>
 
-                        {/* Quick Contact */}
                         <div className="hidden md:flex items-center space-x-6 text-gray-600">
                             <a
                                 href="mailto:info@idealstampa.com"
-                                className="flex items-center space-x-2 hover:text-indigo-600 transition-colors"
+                                className="flex items-center space-x-2 hover:text-teal-600 transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -126,31 +121,27 @@ export default function Nav() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between py-4">
 
-                        {/* Logo */}
                         <a href="/" className="flex-shrink-0">
                             <img className="h-16 w-auto object-contain transition-all duration-300 hover:scale-105"
                                  src="/logo_ideal.png"
                                  alt="Idealstampa Logo"/>
                         </a>
 
-                        {/* Desktop Navigation */}
                         <nav className="hidden lg:flex items-center space-x-8">
                             {navLinks.map((link) => (
                                 <a
                                     key={link.name}
                                     href={link.href}
-                                    className="group relative px-3 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-all duration-300"
+                                    className="group relative px-3 py-2 text-gray-700 hover:text-teal-600 font-medium transition-all duration-300"
                                     onClick={handleLinkClick}
                                 >
                                     <span>{link.name}</span>
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-300 group-hover:w-full"></span>
                                 </a>
                             ))}
                         </nav>
 
-                        {/* Desktop CTA + Mobile Menu Button */}
                         <div className="flex items-center space-x-4">
-                            {/* Desktop CTA */}
                             <div className="hidden md:flex items-center space-x-3">
                                 <a
                                     href="https://wa.me/393770802322"
@@ -163,16 +154,15 @@ export default function Nav() {
 
                                 <a
                                     href="/preventivo"
-                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                    className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
                                 >
                                     PREVENTIVO
                                 </a>
                             </div>
 
-                            {/* Mobile Menu Button */}
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="lg:hidden p-2 text-gray-600 hover:text-indigo-600 transition-colors relative z-50"
+                                className="lg:hidden p-2 text-gray-600 hover:text-teal-600 transition-colors relative z-50"
                             >
                                 <svg
                                     className={`w-6 h-6 transition-transform duration-300 ${isMenuOpen ? 'rotate-45' : ''}`}
@@ -202,13 +192,12 @@ export default function Nav() {
                 isMenuOpen ? 'translate-x-0' : 'translate-x-full'
             }`}>
                 <div className="flex flex-col h-full">
-                    {/* Mobile Menu Header */}
                     <div className="p-6 border-b border-gray-100">
                         <div className="flex items-center justify-between">
                             <img className="h-12 w-auto" src="../public/logo_ideal.png" alt="Idealstampa" />
                             <button
                                 onClick={() => setIsMenuOpen(false)}
-                                className="p-2 text-gray-600 hover:text-indigo-600 transition-colors"
+                                className="p-2 text-gray-600 hover:text-teal-600 transition-colors"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -216,7 +205,6 @@ export default function Nav() {
                             </button>
                         </div>
 
-                        {/* Mobile Status */}
                         <div className={`mt-4 flex items-center space-x-2 px-3 py-2 rounded-lg ${
                             businessStatus.isOpen
                                 ? 'bg-green-50 text-green-800 border border-green-200'
@@ -229,14 +217,13 @@ export default function Nav() {
                         </div>
                     </div>
 
-                    {/* Mobile Menu Links */}
                     <div className="flex-1 py-6">
                         {navLinks.map((link, index) => (
                             <a
                                 key={link.name}
                                 href={link.href}
                                 onClick={handleLinkClick}
-                                className="flex items-center space-x-4 px-6 py-4 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-300 group"
+                                className="flex items-center space-x-4 px-6 py-4 text-gray-700 hover:text-teal-600 hover:bg-teal-50 transition-all duration-300 group"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
                                 <span className="text-2xl group-hover:scale-110 transition-transform">
@@ -250,13 +237,11 @@ export default function Nav() {
                         ))}
                     </div>
 
-                    {/* Mobile Menu Footer */}
                     <div className="p-6 border-t border-gray-100 space-y-4">
-                        {/* Contact Info */}
                         <div className="space-y-3 text-sm text-gray-600">
                             <a
                                 href="mailto:info@idealstampa.com"
-                                className="flex items-center space-x-3 hover:text-indigo-600 transition-colors"
+                                className="flex items-center space-x-3 hover:text-teal-600 transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -272,7 +257,6 @@ export default function Nav() {
                             </div>
                         </div>
 
-                        {/* Mobile CTA Buttons */}
                         <div className="space-y-3">
                             <a
                                 href="https://wa.me/393770802322"
@@ -289,7 +273,7 @@ export default function Nav() {
 
                             <a
                                 href="/preventivo"
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-full font-medium transition-all duration-300 text-center block"
+                                className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-full font-medium transition-all duration-300 text-center block"
                                 onClick={handleLinkClick}
                             >
                                 Richiedi Preventivo
@@ -299,7 +283,6 @@ export default function Nav() {
                 </div>
             </nav>
 
-            {/* Content */}
             <div className="px-4 sm:px-6 lg:px-8">
                 <main>
                     <Outlet />
