@@ -524,7 +524,7 @@ export default function Hero() {
                         </a>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center text-sm text-gray-600">
+                    <div className="flex flex-col items-center justify-center text-sm text-white">
                         <div className="flex items-center gap-2 justify-center lg:justify-start">
 
                             {/* Icona telefono grigia */}
@@ -532,7 +532,7 @@ export default function Hero() {
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
-                                className="w-5 h-5 text-gray-500"
+                                className="w-5 h-5 text-white"
                             >
                                 <path d="M2.25 6.75c0 7.456 6.044 13.5 13.5 13.5h2.25a2.25 2.25 0 002.25-2.25v-1.372a1.125 1.125 0 00-.845-1.09l-4.423-1.106a1.125 1.125 0 00-1.173.417l-.97 1.293a1.125 1.125 0 01-1.21.41 10.5 10.5 0 01-6.18-6.18 1.125 1.125 0 01.41-1.21l1.293-.97a1.125 1.125 0 00.417-1.173L6.462 3.095A1.125 1.125 0 005.372 2.25H4A2.25 2.25 0 001.75 4.5v2.25z"/>
                             </svg>
@@ -540,7 +540,7 @@ export default function Hero() {
                             {/* Numero centrato e cliccabile */}
                             <a
                                 href="tel:+390808912322"
-                                className="font-medium text-gray-700 hover:text-teal-600 transition"
+                                className="font-medium text-white hover:text-teal-600 transition"
                             >
                                 +39 080 891 2322
                             </a>
