@@ -205,17 +205,23 @@ export default function Hero() {
                             {/* Trust Indicators */}
                             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-gray-600">
                                 <div className="flex items-center">
-                                    <span className="text-teal-500 mr-2">✓</span>
-                                    Preventivi gratuiti
+                                    <span className="text-teal-500 mr-2">
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                            className="w-12 h-12 text-green-500"
+                                        >
+                                          <path
+                                              d="M2.25 6.75c0 7.456 6.044 13.5 13.5 13.5h2.25a2.25 2.25 0 002.25-2.25v-1.372a1.125 1.125 0 00-.845-1.09l-4.423-1.106a1.125 1.125 0 00-1.173.417l-.97 1.293a1.125 1.125 0 01-1.21.41 10.5 10.5 0 01-6.18-6.18 1.125 1.125 0 01.41-1.21l1.293-.97a1.125 1.125 0 00.417-1.173L6.462 3.095A1.125 1.125 0 005.372 2.25H4A2.25 2.25 0 001.75 4.5v2.25z"/>
+                                        </svg>
+                                    </span>
+                                    <a href="tel:+390808912322" >
+                                        +39 080 891 2322
+                                    </a>
                                 </div>
-                                <div className="flex items-center">
-                                    <span className="text-teal-500 mr-2">✓</span>
-                                    Consegna puntuale
-                                </div>
-                                <div className="flex items-center">
-                                    <span className="text-teal-500 mr-2">✓</span>
-                                    Qualità garantita
-                                </div>
+
                             </div>
                         </div>
 
