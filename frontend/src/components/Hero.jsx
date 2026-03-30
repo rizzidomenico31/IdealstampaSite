@@ -223,7 +223,7 @@ export default function Hero() {
                         <div className="relative">
                             <div className="relative z-10">
                                 <img
-                                    src="/plantone.png"
+                                    src="/hero_main.png"
                                     alt="Lavorazione tipografica professionale"
                                     className="w-full h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-700"
                                 />
@@ -466,7 +466,6 @@ export default function Hero() {
             </section>
 
             {/* Process Section */}
-            <Production />
 
             {/* CTA Section - teal gradient */}
             <section className="py-20 bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-700 relative overflow-hidden">
