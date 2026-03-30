@@ -469,7 +469,7 @@ export default function Hero() {
             </section>
 
             {/* Process Section */}
-            <Production />
+
 
             {/* CTA Section */}
             <section className="py-20 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 relative overflow-hidden">
