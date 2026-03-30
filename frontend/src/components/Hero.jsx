@@ -203,7 +203,7 @@ export default function Hero() {
                             </div>
 
                             {/* Trust Indicators */}
-                            <div className="flex flex-col items-center justify-center lg:items-start text-sm text-gray-600">
+                            <div className="flex flex-col items-center justify-center text-sm text-gray-600">
                                 <div className="flex items-center gap-2 justify-center lg:justify-start">
 
                                     {/* Icona telefono grigia */}
