@@ -225,7 +225,7 @@ export default function Hero() {
                         <div className="relative">
                             <div className="relative z-10">
                                 <img
-                                    src="/plantone.png"
+                                    src="/hero_main.png"
                                     alt="Lavorazione tipografica professionale"
                                     className="w-full h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-700"
                                 />
