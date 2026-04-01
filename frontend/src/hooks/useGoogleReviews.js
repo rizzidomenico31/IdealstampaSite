@@ -2,7 +2,7 @@
 // Custom hook per recuperare le recensioni Google dal backend
 import { useState, useEffect } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://nodejs-p9se-production.up.railway.app';
 
 export function useGoogleReviews() {
     const [reviews, setReviews] = useState([]);
