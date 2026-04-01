@@ -415,23 +415,6 @@ export default function TerminiCondizioni() {
                     </p>
                 </div>
 
-                {/* Quick nav pills */}
-                <div className="flex flex-wrap gap-2 mb-8">
-                    {sections.map((s) => (
-                        <button
-                            key={s.id}
-                            onClick={() => setActiveSection(activeSection === s.id ? null : s.id)}
-                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                                activeSection === s.id
-                                    ? 'bg-gray-800 text-white'
-                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                            }`}
-                        >
-                            <span>{s.icon}</span>
-                            <span className="hidden sm:inline">{s.title.split(' ').slice(0, 2).join(' ')}</span>
-                        </button>
-                    ))}
-                </div>
 
                 {/* Sections */}
                 <div className="space-y-4">
