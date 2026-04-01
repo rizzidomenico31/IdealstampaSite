@@ -9,6 +9,11 @@ import Servizi from "./components/Servizi.jsx";
 import Preventivo from "./components/Preventivo.jsx";
 import PasswordProtection from "./components/PasswordProtection.jsx";
 import NotFound from "./components/404.jsx";
+import PrivacyPolicy from "./components/Privacy.jsx";
+import CookiePolicy from "./components/Cookie.jsx";
+import TerminiCondizioni from "./components/Termini.jsx";
+
+
 export default function App() {
     return (
         <PasswordProtection>
@@ -22,6 +27,9 @@ export default function App() {
                     <Route path="/servizi" element={<Servizi />} />
                     <Route path="/preventivo" element={<Preventivo />} />
                     <Route path="*" element={<NotFound />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/cookies" element={<CookiePolicy />} />
+                    <Route path="/termini" element={<TerminiCondizioni />} />
                 </Route>
 
             </Routes>
