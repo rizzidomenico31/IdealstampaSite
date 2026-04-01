@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import Production from "./Production.jsx";
+import Testimonials from "./Testimonials.jsx";
 
 export default function Hero() {
-    const [currentTestimonial, setCurrentTestimonial] = useState(0);
     const [isVisible, setIsVisible] = useState({});
 
     useEffect(() => {
@@ -26,12 +25,7 @@ export default function Hero() {
         return () => observer.disconnect();
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, []);
+
 
     const stats = [
         { number: '30+', label: 'Anni di Esperienza', icon: '🏆' },
@@ -85,29 +79,6 @@ export default function Hero() {
         }
     ];
 
-    const testimonials = [
-        {
-            name: 'Marco Bianchi',
-            company: 'AutoTech Solutions',
-            text: 'Collaboriamo con Idealstampa da oltre 5 anni per tutti i nostri cataloghi aziendali. Qualità impeccabile e tempi sempre rispettati.',
-            rating: 5,
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-        },
-        {
-            name: 'Elena Rossi',
-            company: 'Studio Legale Rossi',
-            text: 'I nostri biglietti da visita con stampa oro sono sempre un successo. Professionalità e attenzione al dettaglio eccezionali.',
-            rating: 5,
-            avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b098?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-        },
-        {
-            name: 'Giuseppe Verdi',
-            company: 'Ristorante Villa dei Sapori',
-            text: 'I nostri menu sono diventati parte dell\'esperienza culinaria grazie alla qualità dei materiali e del design. Consigliatissimi!',
-            rating: 5,
-            avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-        }
-    ];
 
     const portfolioHighlights = [
         {
@@ -419,62 +390,8 @@ export default function Hero() {
             </section>
 
             {/* Testimonials */}
-            <section id="testimonials" data-animate className={`py-20 bg-gradient-to-br from-teal-50 to-cyan-50 transition-all duration-1000 ${isVisible.testimonials ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                            Cosa Dicono di Noi
-                        </h2>
-                        <p className="text-xl text-gray-600">
-                            La soddisfazione dei nostri clienti è la nostra priorità
-                        </p>
-                    </div>
+            <Testimonials isVisible={isVisible.testimonials} />
 
-                    <div className="relative">
-                        <div className="bg-white rounded-2xl p-8 shadow-xl">
-                            <div className="flex items-center justify-center mb-6">
-                                {[...Array(5)].map((_, i) => (
-                                    <svg key={i} className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                    </svg>
-                                ))}
-                            </div>
-
-                            <blockquote className="text-xl text-gray-700 text-center mb-8 leading-relaxed">
-                                "{testimonials[currentTestimonial].text}"
-                            </blockquote>
-
-                            <div className="flex items-center justify-center">
-                                <img
-                                    src={testimonials[currentTestimonial].avatar}
-                                    alt={testimonials[currentTestimonial].name}
-                                    className="w-16 h-16 rounded-full object-cover mr-4"
-                                />
-                                <div>
-                                    <div className="font-semibold text-gray-900">
-                                        {testimonials[currentTestimonial].name}
-                                    </div>
-                                    <div className="text-gray-600">
-                                        {testimonials[currentTestimonial].company}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-center mt-8 space-x-2">
-                            {testimonials.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentTestimonial(index)}
-                                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                                        index === currentTestimonial ? 'bg-teal-600 w-8' : 'bg-gray-300'
-                                    }`}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Process Section */}
 

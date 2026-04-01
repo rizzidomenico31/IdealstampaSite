@@ -9,7 +9,9 @@ const { body, validationResult } = require('express-validator');
 const path = require('path');
 const fs = require('fs').promises;
 const sgTransport = require('nodemailer-sendgrid');
+const reviewsRouter = require('./routes/reviews');
 require('dotenv').config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -86,6 +88,8 @@ const limiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false
 });
+
+app.use('/api/reviews', reviewsRouter);
 
 app.use('/api/preventivo', limiter);
 
@@ -620,6 +624,7 @@ app.use((error, req, res, next) => {
 
     next(error);
 });
+
 
 // Endpoint di test per verificare che il server funzioni
 app.get('/api/health', (req, res) => {
