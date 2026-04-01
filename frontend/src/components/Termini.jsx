@@ -396,7 +396,7 @@ export default function TerminiCondizioni() {
                     <p className="text-gray-300 text-lg">
                         Condizioni generali di servizio di Tipografia Idealstampa
                     </p>
-                    <p className="text-gray-400 text-sm mt-3">Ultimo aggiornamento: Gennaio 2025</p>
+                    <p className="text-gray-400 text-sm mt-3">Ultimo aggiornamento: Marzo 2026</p>
                 </div>
             </div>
 

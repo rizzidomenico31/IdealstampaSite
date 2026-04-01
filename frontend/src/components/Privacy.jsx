@@ -269,7 +269,7 @@ export default function PrivacyPolicy() {
                     <p className="text-blue-100 text-lg">
                         Informativa sul trattamento dei dati personali ai sensi del Regolamento UE 2016/679 (GDPR)
                     </p>
-                    <p className="text-blue-200 text-sm mt-3">Ultimo aggiornamento: Gennaio 2025</p>
+                    <p className="text-blue-200 text-sm mt-3">Ultimo aggiornamento: Marzo 2026</p>
                 </div>
             </div>
 

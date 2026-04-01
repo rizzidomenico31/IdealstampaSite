@@ -223,7 +223,7 @@ export default function CookiePolicy() {
                     <p className="text-cyan-100 text-lg">
                         Informativa sull'uso dei cookie ai sensi del D.Lgs. 196/2003 e del Regolamento UE 2016/679
                     </p>
-                    <p className="text-cyan-200 text-sm mt-3">Ultimo aggiornamento: Gennaio 2025</p>
+                    <p className="text-cyan-200 text-sm mt-3">Ultimo aggiornamento: Marzo 2026</p>
                 </div>
             </div>
 
