@@ -143,12 +143,15 @@ export default function Testimonials({ isVisible }) {
         return () => clearInterval(interval);
     }, [reviews.length, isPaused]);
 
-    // Scroll il track alla card attiva
+    // Scroll il track alla card attiva (solo orizzontale, senza toccare la pagina)
     useEffect(() => {
         if (!trackRef.current || reviews.length === 0) return;
         const card = trackRef.current.children[current];
         if (card) {
-            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            const containerLeft = trackRef.current.getBoundingClientRect().left;
+            const cardLeft = card.getBoundingClientRect().left;
+            const offset = cardLeft - containerLeft - (trackRef.current.offsetWidth / 2) + (card.offsetWidth / 2);
+            trackRef.current.scrollBy({ left: offset, behavior: 'smooth' });
         }
     }, [current, reviews.length]);
 
