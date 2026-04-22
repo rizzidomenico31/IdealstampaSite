@@ -8,7 +8,7 @@ const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const path = require('path');
 const fs = require('fs').promises;
-const sgTransport = require('nodemailer-sendgrid');
+//const sgTransport = require('nodemailer-sendgrid');
 const reviewsRouter = require('./routes/reviews');
 require('dotenv').config();
 
