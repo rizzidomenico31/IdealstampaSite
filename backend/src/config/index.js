@@ -81,6 +81,20 @@ const config = {
         options: {
             serverSelectionTimeoutMS: toInt(process.env.MONGO_TIMEOUT_MS, 5000)
         }
+    },
+
+    auth: {
+        jwtSecret: process.env.JWT_SECRET || '',
+        jwtExpiresIn: process.env.JWT_EXPIRES_IN || '2h',
+        bcryptRounds: toInt(process.env.BCRYPT_ROUNDS, 12),
+        loginRateLimit: {
+            windowMs: toInt(process.env.LOGIN_RATE_WINDOW_MS, 15 * 60 * 1000),
+            max: toInt(process.env.LOGIN_RATE_MAX, 5)
+        },
+        lockout: {
+            maxAttempts: toInt(process.env.LOGIN_MAX_ATTEMPTS, 5),
+            durationMs: toInt(process.env.LOGIN_LOCK_MS, 15 * 60 * 1000)
+        }
     }
 };
 

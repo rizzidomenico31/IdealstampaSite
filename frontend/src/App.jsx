@@ -1,7 +1,6 @@
+import { Routes, Route, Navigate } from "react-router-dom";
 import Nav from "./components/Nav.jsx";
-import Footer from "./components/Footer.jsx";
 import Hero from "./components/Hero.jsx";
-import {Routes , Route} from "react-router-dom";
 import Info from "./components/Info.jsx";
 import Portfolio from "./components/Portfolio.jsx";
 import Contact from "./components/Contact.jsx";
@@ -13,26 +12,51 @@ import PrivacyPolicy from "./components/Privacy.jsx";
 import CookiePolicy from "./components/Cookie.jsx";
 import TerminiCondizioni from "./components/Termini.jsx";
 
+import AdminLogin from "./components/admin/AdminLogin.jsx";
+import AdminLayout from "./components/admin/AdminLayout.jsx";
+import AdminDashboard from "./components/admin/AdminDashboard.jsx";
+import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
+
 
 export default function App() {
     return (
-        <PasswordProtection>
+        <Routes>
+            {/* Admin area — fuori da PasswordProtection e dalla Nav pubblica */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+                path="/admin"
+                element={
+                    <ProtectedRoute>
+                        <AdminLayout />
+                    </ProtectedRoute>
+                }
+            >
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
+            </Route>
 
-            <Routes>
-                <Route path="/" element={<Nav />} >
-                    <Route index element={<Hero />} />
-                    <Route path="/info" element={<Info />} />
-                    <Route path="/portfolio" element={<Portfolio />} />
-                    <Route path="/contatti" element={<Contact />} />
-                    <Route path="/servizi" element={<Servizi />} />
-                    <Route path="/preventivo" element={<Preventivo />} />
-                    <Route path="*" element={<NotFound />} />
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/cookies" element={<CookiePolicy />} />
-                    <Route path="/termini" element={<TerminiCondizioni />} />
-                </Route>
-
-            </Routes>
-        </PasswordProtection>
-    )
+            {/* Sito pubblico — sotto PasswordProtection + layout Nav */}
+            <Route
+                path="/*"
+                element={
+                    <PasswordProtection>
+                        <Routes>
+                            <Route path="/" element={<Nav />}>
+                                <Route index element={<Hero />} />
+                                <Route path="/info" element={<Info />} />
+                                <Route path="/portfolio" element={<Portfolio />} />
+                                <Route path="/contatti" element={<Contact />} />
+                                <Route path="/servizi" element={<Servizi />} />
+                                <Route path="/preventivo" element={<Preventivo />} />
+                                <Route path="/privacy" element={<PrivacyPolicy />} />
+                                <Route path="/cookies" element={<CookiePolicy />} />
+                                <Route path="/termini" element={<TerminiCondizioni />} />
+                                <Route path="*" element={<NotFound />} />
+                            </Route>
+                        </Routes>
+                    </PasswordProtection>
+                }
+            />
+        </Routes>
+    );
 }

@@ -12,4 +12,17 @@ const preventivoLimiter = rateLimit({
     }
 });
 
-module.exports = { preventivoLimiter };
+const loginLimiter = rateLimit({
+    windowMs: config.auth.loginRateLimit.windowMs,
+    max: config.auth.loginRateLimit.max,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skipSuccessfulRequests: true,
+    message: {
+        success: false,
+        code: 'RATE_LIMITED',
+        message: 'Troppi tentativi di accesso. Riprova tra qualche minuto.'
+    }
+});
+
+module.exports = { preventivoLimiter, loginLimiter };
