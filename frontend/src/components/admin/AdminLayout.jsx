@@ -130,10 +130,6 @@ function SidebarContent({ navItems, onNavigate }) {
                     alt="Idealstampa"
                     className="h-10 w-auto object-contain filter brightness-0 invert"
                 />
-                <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-white leading-tight truncate">Idealstampa</div>
-                    <div className="text-xs text-slate-400">Admin Panel</div>
-                </div>
             </div>
 
             <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
