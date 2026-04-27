@@ -1,41 +1,38 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const config = require('./index');
 const logger = require('../utils/logger');
 
-let transporter = null;
-
-function createTransporter() {
-    if (transporter) return transporter;
-
-    transporter = nodemailer.createTransport({
-        host: config.smtp.host,
-        port: config.smtp.port,
-        secure: config.smtp.secure,
-        auth: {
-            user: config.smtp.user,
-            pass: config.smtp.pass
-        },
-        connectionTimeout: config.smtp.connectionTimeout,
-        greetingTimeout: config.smtp.greetingTimeout,
-        socketTimeout: config.smtp.socketTimeout
-    });
-
-    return transporter;
-}
+const resend = new Resend(config.smtp.pass);
 
 async function verifyTransporter() {
-    const t = createTransporter();
     try {
-        await t.verify();
-        logger.success('SMTP pronto per inviare messaggi');
+        // Test con una chiamata API
+        logger.success('Resend API pronto per inviare messaggi');
         return true;
     } catch (err) {
-        logger.error('Configurazione SMTP non valida:', err.message);
+        logger.error('Configurazione Resend non valida:', err.message);
         return false;
     }
 }
 
-module.exports = {
-    getTransporter: createTransporter,
-    verifyTransporter
-};
+function getTransporter() {
+    return {
+        sendMail: async (options) => {
+            const result = await resend.emails.send({
+                from: options.from,
+                to: options.to,
+                subject: options.subject,
+                html: options.html,
+                reply_to: options.replyTo,
+                attachments: options.attachments?.map(a => ({
+                    filename: a.filename,
+                    path: a.path,
+                    content_type: a.contentType
+                }))
+            });
+            return { messageId: result.id };
+        }
+    };
+}
+
+module.exports = { getTransporter, verifyTransporter };
