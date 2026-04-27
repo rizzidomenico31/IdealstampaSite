@@ -30,7 +30,15 @@ function getTransporter() {
                     content_type: a.contentType
                 }))
             });
-            return { messageId: result.id };
+
+            // Log risposta completa Resend
+            console.log('RESEND RESPONSE:', JSON.stringify(result));
+
+            if (result.error) {
+                throw new Error(`Resend error: ${JSON.stringify(result.error)}`);
+            }
+
+            return { messageId: result.data?.id };
         }
     };
 }
