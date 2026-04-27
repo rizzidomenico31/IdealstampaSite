@@ -13,13 +13,20 @@ export default function AdminDashboard() {
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             {/* Welcome */}
-            <div className="bg-white rounded-2xl p-6 lg:p-8 border border-slate-200 shadow-sm">
-                <h1 className="text-2xl font-bold text-slate-900">
-                    Benvenuto{admin?.username ? `, ${admin.username}` : ''} 👋
-                </h1>
-                <p className="text-slate-500 mt-1">
-                    Pannello di controllo Idealstampa. Da qui potrai gestire preventivi, utenti e contenuti del sito.
-                </p>
+            <div className="bg-white rounded-2xl p-6 lg:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center gap-6">
+                <img
+                    src="/logo_ideal.png"
+                    alt="Idealstampa"
+                    className="h-16 w-auto object-contain shrink-0"
+                />
+                <div className="flex-1">
+                    <h1 className="text-2xl font-bold text-slate-900">
+                        Benvenuto{admin?.username ? `, ${admin.username}` : ''} 👋
+                    </h1>
+                    <p className="text-slate-500 mt-1">
+                        Pannello di controllo Idealstampa. Da qui potrai gestire preventivi, utenti e contenuti del sito.
+                    </p>
+                </div>
             </div>
 
             {/* Stat cards */}

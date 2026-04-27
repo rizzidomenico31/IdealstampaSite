@@ -71,3 +71,16 @@ export const adminApi = {
             body: { currentPassword, newPassword }
         })
 };
+
+export const usersApi = {
+    list: () =>
+        apiFetch('/api/admin/users', { auth: true }),
+    create: ({ username, password, role }) =>
+        apiFetch('/api/admin/users', { method: 'POST', auth: true, body: { username, password, role } }),
+    update: (id, patch) =>
+        apiFetch(`/api/admin/users/${id}`, { method: 'PATCH', auth: true, body: patch }),
+    resetPassword: (id, newPassword) =>
+        apiFetch(`/api/admin/users/${id}/password`, { method: 'POST', auth: true, body: { newPassword } }),
+    remove: (id) =>
+        apiFetch(`/api/admin/users/${id}`, { method: 'DELETE', auth: true })
+};

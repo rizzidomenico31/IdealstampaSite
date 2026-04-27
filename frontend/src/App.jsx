@@ -15,6 +15,7 @@ import TerminiCondizioni from "./components/Termini.jsx";
 import AdminLogin from "./components/admin/AdminLogin.jsx";
 import AdminLayout from "./components/admin/AdminLayout.jsx";
 import AdminDashboard from "./components/admin/AdminDashboard.jsx";
+import AdminUsers from "./components/admin/AdminUsers.jsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
 
 
@@ -33,6 +34,14 @@ export default function App() {
             >
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<AdminDashboard />} />
+                <Route
+                    path="users"
+                    element={
+                        <ProtectedRoute requiredRole="superadmin">
+                            <AdminUsers />
+                        </ProtectedRoute>
+                    }
+                />
             </Route>
 
             {/* Sito pubblico — sotto PasswordProtection + layout Nav */}
