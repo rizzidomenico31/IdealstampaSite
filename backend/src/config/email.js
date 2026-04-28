@@ -24,11 +24,17 @@ function getTransporter() {
                 subject: options.subject,
                 html: options.html,
                 reply_to: options.replyTo,
-                attachments: options.attachments?.map(a => ({
-                    filename: a.filename,
-                    path: a.path,
-                    content_type: a.contentType
-                }))
+                attachments: options.attachments?.length > 0
+                    ? await Promise.all(options.attachments.map(async a => {
+                        const fs = require('fs').promises;
+                        const content = await fs.readFile(a.path);
+                        return {
+                            filename: a.filename,
+                            content: content.toString('base64'),
+                            content_type: a.contentType
+                        };
+                    }))
+                    : undefined
             });
 
             // Log risposta completa Resend
