@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link2, Settings, MapPin, Heart } from 'lucide-react';
 
 export default function Footer() {
     const year = new Date().getFullYear();
@@ -31,7 +32,6 @@ export default function Footer() {
     const quickLinks = [
         { name: 'Chi Siamo', href: '/info' },
         { name: 'I Nostri Servizi', href: '/servizi' },
-        { name: 'Portfolio', href: '/portfolio' },
         { name: 'Contatti', href: '/contatti' },
     ];
 
@@ -103,7 +103,7 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h3 className="text-lg font-semibold mb-6 text-white flex items-center"><span className="mr-2">🔗</span>Link Rapidi</h3>
+                            <h3 className="text-lg font-semibold mb-6 text-white flex items-center"><Link2 className="w-5 h-5 mr-2 text-teal-400" />Link Rapidi</h3>
                             <ul className="space-y-3">
                                 {quickLinks.map((link, index) => (
                                     <li key={index}>
@@ -117,7 +117,7 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h3 className="text-lg font-semibold mb-6 text-white flex items-center"><span className="mr-2">⚙️</span>I Nostri Servizi</h3>
+                            <h3 className="text-lg font-semibold mb-6 text-white flex items-center"><Settings className="w-5 h-5 mr-2 text-teal-400" />I Nostri Servizi</h3>
                             <ul className="space-y-3">
                                 {services.map((service, index) => (
                                     <li key={index}>
@@ -131,7 +131,7 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h3 className="text-lg font-semibold mb-6 text-white flex items-center"><span className="mr-2">📍</span>Contattaci</h3>
+                            <h3 className="text-lg font-semibold mb-6 text-white flex items-center"><MapPin className="w-5 h-5 mr-2 text-teal-400" />Contattaci</h3>
                             <div className="space-y-4">
                                 <div className="flex items-start space-x-3 group">
                                     <div className="bg-gray-800 p-2 rounded-lg group-hover:bg-teal-600 transition-colors">
@@ -179,7 +179,7 @@ export default function Footer() {
                             <div className="text-center lg:text-left">
                                 <p className="text-gray-400 text-sm">© {year} Tipografia Idealstampa. Tutti i diritti riservati.</p>
                                 <p className="text-gray-500 text-xs mt-1">
-                                    Realizzato con ❤️ da{' '}
+                                    Realizzato con <Heart className="inline w-4 h-4 text-teal-400 align-text-bottom" /> da{' '}
                                     <a href="#" className="text-teal-400 hover:text-teal-300 transition-colors" target="_blank" rel="noopener noreferrer">Domenico Rizzi</a>
                                 </p>
                             </div>

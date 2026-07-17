@@ -1,37 +1,3 @@
-const SERVIZI = {
-    offset: 'Stampa Offset',
-    digitale: 'Stampa Digitale',
-    'grande-formato': 'Grande Formato',
-    packaging: 'Packaging',
-    editoria: 'Editoria',
-    finiture: 'Finiture Speciali'
-};
-
-const TIPI_PROGETTO = {
-    business: 'Materiale Aziendale',
-    marketing: 'Materiale Promozionale',
-    eventi: 'Eventi Speciali',
-    editoria: 'Prodotti Editoriali',
-    packaging: 'Packaging',
-    altro: 'Altro Progetto'
-};
-
-const URGENZE = {
-    urgente: { label: 'Urgente (1-3 giorni)', note: 'Sovrapprezzo +20%', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
-    normale: { label: 'Normale (5-7 giorni)', note: 'Tempistiche standard', color: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
-    rilassato: { label: 'Non ho fretta (10-15 giorni)', note: 'Sconto -10%', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' }
-};
-
-function parseFiniture(raw) {
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-    try {
-        return JSON.parse(raw);
-    } catch {
-        return [];
-    }
-}
-
 function escapeHtml(value) {
     if (value === undefined || value === null) return '';
     return String(value)
@@ -56,7 +22,6 @@ function infoRow(label, value, options = {}) {
 }
 
 function render(data, { hasAttachment = false, fileName = null } = {}) {
-    const finiture = parseFiniture(data.finiture);
     const quantita = parseInt(data.quantita, 10);
     const quantitaFmt = Number.isFinite(quantita) ? quantita.toLocaleString('it-IT') : data.quantita;
 
@@ -70,9 +35,6 @@ function render(data, { hasAttachment = false, fileName = null } = {}) {
         minute: '2-digit'
     });
 
-    const urgenza = URGENZE[data.urgenza] || { label: data.urgenza || '—', note: '', color: '#475569', bg: '#f8fafc', border: '#e2e8f0' };
-    const tipoProgetto = TIPI_PROGETTO[data.tipoProgetto] || data.tipoProgetto;
-    const servizio = SERVIZI[data.servizio] || data.servizio;
     const nomeCompleto = `${data.nome || ''} ${data.cognome || ''}`.trim();
 
     return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -104,7 +66,7 @@ function render(data, { hasAttachment = false, fileName = null } = {}) {
 </head>
 <body style="margin:0; padding:0; background-color:#f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing:antialiased;">
     <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
-        Nuovo preventivo da ${escapeHtml(nomeCompleto)} - ${escapeHtml(servizio)} - ${escapeHtml(quantitaFmt)} pezzi${hasAttachment ? ' - Con file allegato' : ''}
+        Nuovo preventivo da ${escapeHtml(nomeCompleto)} - ${escapeHtml(quantitaFmt)} pezzi${hasAttachment ? ' - Con file allegato' : ''}
     </div>
 
     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#f1f5f9;">
@@ -140,32 +102,8 @@ function render(data, { hasAttachment = false, fileName = null } = {}) {
                                             ${escapeHtml(nomeCompleto)}
                                         </h1>
                                         <p style="margin:0; color:rgba(255,255,255,0.92); font-size:15px; line-height:22px;">
-                                            ${escapeHtml(servizio)} &middot; ${escapeHtml(quantitaFmt)} pezzi
+                                            ${escapeHtml(quantitaFmt)} pezzi
                                         </p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="background-color:#f8fafc; padding:20px 40px; border-bottom:1px solid #e2e8f0;" class="px-mobile">
-                            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <td class="stack" width="33%" valign="top" style="padding-right:8px;">
-                                        <p style="margin:0 0 4px 0; color:#64748b; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Urgenza</p>
-                                        <span style="display:inline-block; padding:6px 12px; background-color:${urgenza.bg}; color:${urgenza.color}; border:1px solid ${urgenza.border}; border-radius:999px; font-size:13px; font-weight:600;">
-                                            ${escapeHtml(urgenza.label)}
-                                        </span>
-                                        ${urgenza.note ? `<p style="margin:6px 0 0 0; color:#64748b; font-size:12px;">${escapeHtml(urgenza.note)}</p>` : ''}
-                                    </td>
-                                    <td class="stack" width="33%" valign="top" style="padding:0 8px;">
-                                        <p style="margin:0 0 4px 0; color:#64748b; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Tipo progetto</p>
-                                        <p style="margin:0; color:#0f172a; font-size:14px; font-weight:600;">${escapeHtml(tipoProgetto || '—')}</p>
-                                    </td>
-                                    <td class="stack" width="33%" valign="top" style="padding-left:8px;">
-                                        <p style="margin:0 0 4px 0; color:#64748b; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Budget</p>
-                                        <p style="margin:0; color:#0f172a; font-size:14px; font-weight:600;">${data.budget ? '&euro; ' + escapeHtml(data.budget) : '<span style="color:#94a3b8; font-weight:500;">Non indicato</span>'}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -217,56 +155,17 @@ function render(data, { hasAttachment = false, fileName = null } = {}) {
                             <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:8px;">
                                 <tr>
                                     <td>
-                                        <p style="margin:0 0 4px 0; color:#0f172a; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Specifiche tecniche</p>
+                                        <p style="margin:0 0 4px 0; color:#0f172a; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Dettagli richiesta</p>
                                         <div style="height:2px; width:32px; background-color:#0d9488; border-radius:2px;"></div>
                                     </td>
                                 </tr>
                             </table>
                             <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 ${infoRow('Quantità', `${quantitaFmt} pezzi`)}
-                                ${infoRow('Formato', data.formato)}
-                                ${data.pagine ? infoRow('Numero pagine', data.pagine) : ''}
-                                ${infoRow('Colori', data.colori)}
-                                ${infoRow('Tipo di carta', data.carta)}
+                                ${infoRow('File', hasAttachment ? (fileName || 'File allegato all\'email') : 'Nessun file allegato')}
                             </table>
-
-                            ${finiture.length > 0 ? `
-                            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:16px;">
-                                <tr>
-                                    <td>
-                                        <p style="margin:0 0 8px 0; color:#64748b; font-size:13px;">Finiture speciali richieste:</p>
-                                        <div>
-                                            ${finiture.map(f => `<span style="display:inline-block; margin:0 6px 6px 0; padding:5px 12px; background-color:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:6px; font-size:12px; font-weight:600;">${escapeHtml(f)}</span>`).join('')}
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>` : ''}
                         </td>
                     </tr>
-
-                    ${(data.hasFile === 'true' || data.hasFile === 'false' || data.fileInfo) ? `
-                    <tr>
-                        <td style="padding:24px 40px 8px 40px;" class="px-mobile">
-                            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:8px;">
-                                <tr>
-                                    <td>
-                                        <p style="margin:0 0 4px 0; color:#0f172a; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px;">File grafici</p>
-                                        <div style="height:2px; width:32px; background-color:#0d9488; border-radius:2px;"></div>
-                                    </td>
-                                </tr>
-                            </table>
-                            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:${data.hasFile === 'false' ? '#fffbeb' : '#f0fdf4'}; border:1px solid ${data.hasFile === 'false' ? '#fde68a' : '#bbf7d0'}; border-radius:8px;">
-                                <tr>
-                                    <td style="padding:14px 18px;">
-                                        <p style="margin:0 0 4px 0; color:${data.hasFile === 'false' ? '#92400e' : '#166534'}; font-size:14px; font-weight:600;">
-                                            ${data.hasFile === 'true' ? (hasAttachment ? 'File allegato a questa email' : 'Il cliente ha file pronti') : data.hasFile === 'false' ? 'Servizio di progettazione richiesto' : 'Informazioni sul file'}
-                                        </p>
-                                        ${data.fileInfo ? `<p style="margin:0; color:#475569; font-size:13px; line-height:18px;">${escapeHtml(data.fileInfo)}</p>` : ''}
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>` : ''}
 
                     ${data.note ? `
                     <tr>

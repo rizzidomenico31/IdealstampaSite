@@ -13,12 +13,6 @@ function toBool(v) {
     return v === true || v === 'true';
 }
 
-function parseFiniture(raw) {
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-    try { return JSON.parse(raw); } catch { return []; }
-}
-
 function buildQuoteDoc(formData, file, req) {
     return {
         nome: formData.nome,
@@ -26,19 +20,9 @@ function buildQuoteDoc(formData, file, req) {
         email: formData.email,
         telefono: formData.telefono,
         azienda: formData.azienda || undefined,
-        tipoProgetto: formData.tipoProgetto,
-        servizio: formData.servizio,
-        urgenza: formData.urgenza,
         quantita: parseInt(formData.quantita, 10),
-        formato: formData.formato,
-        colori: formData.colori,
-        carta: formData.carta,
-        pagine: formData.pagine ? parseInt(formData.pagine, 10) : undefined,
-        finiture: parseFiniture(formData.finiture),
-        note: formData.note || undefined,
-        budget: formData.budget || undefined,
+        note: formData.note,
         privacy: toBool(formData.privacy),
-        newsletter: toBool(formData.newsletter),
         file: file ? {
             originalName: file.originalname,
             storedName: file.filename,

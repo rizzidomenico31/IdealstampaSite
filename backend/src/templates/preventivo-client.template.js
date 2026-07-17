@@ -1,6 +1,5 @@
 function render(data, { hasFile = false } = {}) {
     const nome = `${data.nome || ''} ${data.cognome || ''}`.trim();
-    const servizio = data.servizio || 'il servizio richiesto';
 
     return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -81,7 +80,7 @@ function render(data, { hasFile = false } = {}) {
                                 Gentile <strong>${nome}</strong>,
                             </p>
                             <p style="margin:0 0 24px 0; color:#475569; font-size:16px; line-height:24px;">
-                                la sua richiesta di preventivo per <strong style="color:#0f172a;">${servizio}</strong> è stata registrata correttamente ed è già stata presa in carico dal nostro team.
+                                la sua richiesta di preventivo è stata registrata correttamente ed è già stata presa in carico dal nostro team.
                             </p>
 
                             <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#f0fdfa; border-left:4px solid #0d9488; border-radius:8px; margin:0 0 24px 0;">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Trophy, ClipboardList, Smile, Zap, Sparkles, Target, Rocket, Lightbulb, Leaf, ShieldCheck, Heart } from 'lucide-react';
 import Testimonials from "./Testimonials.jsx";
 
 export default function Hero() {
@@ -28,10 +29,10 @@ export default function Hero() {
 
 
     const stats = [
-        { number: '30+', label: 'Anni di Esperienza', icon: '🏆' },
-        { number: '10K+', label: 'Progetti Realizzati', icon: '📋' },
-        { number: '500+', label: 'Clienti che ci Scelgono', icon: '😊' },
-        { number: '24h', label: 'Risposta Garantita', icon: '⚡' },
+        { number: '30+', label: 'Anni di Esperienza', icon: <Trophy className="w-9 h-9" /> },
+        { number: '10K+', label: 'Progetti Realizzati', icon: <ClipboardList className="w-9 h-9" /> },
+        { number: '500+', label: 'Clienti che ci Scelgono', icon: <Smile className="w-9 h-9" /> },
+        { number: '24h', label: 'Risposta Garantita', icon: <Zap className="w-9 h-9" /> },
     ];
 
     const services = [
@@ -80,33 +81,6 @@ export default function Hero() {
     ];
 
 
-    const portfolioHighlights = [
-        {
-            title: 'Catalogo Premium Automotive',
-            category: 'Stampa Offset',
-            image: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            description: '120 pagine in quadricromia su carta patinata'
-        },
-        {
-            title: 'Banner Pubblicitario 6x2m',
-            category: 'Grande Formato',
-            image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            description: 'PVC banner resistente UV per esterni'
-        },
-        {
-            title: 'Packaging E-commerce',
-            category: 'Packaging',
-            image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            description: 'Scatole sostenibili con finiture soft touch'
-        },
-        {
-            title: 'Libro Fotografico d\'Arte',
-            category: 'Editoria',
-            image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            description: 'Rilegatura cartonata con carta fine art'
-        }
-    ];
-
     return (
         <>
             {/* Hero Section */}
@@ -126,8 +100,8 @@ export default function Hero() {
                         <div className="text-center lg:text-left">
                             <div className="mb-8">
                                 {/* BADGE - teal */}
-                                <span className="inline-flex items-center px-4 py-2 bg-teal-100 text-teal-800 rounded-full text-sm font-medium mb-6 animate-bounce">
-                                    ✨ Dal 1995 al vostro servizio
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 text-teal-800 rounded-full text-sm font-medium mb-6 animate-bounce">
+                                    <Sparkles className="w-4 h-4" /> Dal 1995 al vostro servizio
                                 </span>
 
                                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
@@ -207,31 +181,6 @@ export default function Hero() {
                                     alt="Lavorazione tipografica professionale"
                                     className="w-full h-auto object-cover rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-700"
                                 />
-
-                                {/* Floating Cards */}
-                                <div className="absolute -top-6 -left-6 bg-white p-4 rounded-xl shadow-xl animate-float">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="bg-teal-100 p-2 rounded-lg">
-                                            <span className="text-2xl">🏆</span>
-                                        </div>
-                                        <div>
-                                            <div className="font-bold text-gray-900">30+ Anni</div>
-                                            <div className="text-sm text-gray-600">di Esperienza</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-xl animate-float animation-delay-1000">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="bg-teal-100 p-2 rounded-lg">
-                                            <span className="text-2xl">😊</span>
-                                        </div>
-                                        <div>
-                                            <div className="font-bold text-gray-900">500+</div>
-                                            <div className="text-sm text-gray-600">Clienti Felici</div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -258,7 +207,7 @@ export default function Hero() {
                                 className="text-center text-white transform hover:scale-110 transition-all duration-300"
                                 style={{ animationDelay: `${index * 200}ms` }}
                             >
-                                <div className="text-4xl mb-2 animate-pulse">{stat.icon}</div>
+                                <div className="mb-3 flex justify-center animate-pulse">{stat.icon}</div>
                                 <div className="text-4xl font-bold mb-2">{stat.number}</div>
                                 <div className="text-teal-100">{stat.label}</div>
                             </div>
@@ -322,65 +271,6 @@ export default function Hero() {
                             className="inline-flex items-center bg-teal-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-teal-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
                         >
                             Vedi Tutti i Servizi
-                            <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            {/* Portfolio Highlights */}
-            <section id="portfolio" data-animate className={`py-20 bg-white transition-all duration-1000 ${isVisible.portfolio ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                            I Nostri Lavori
-                        </h2>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Ogni progetto racconta una storia di qualità, precisione e creatività.
-                            Scopri alcuni dei nostri lavori più significativi.
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {portfolioHighlights.map((item, index) => (
-                            <div
-                                key={index}
-                                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105"
-                            >
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
-
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-
-                                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                                    <span className="inline-block bg-teal-600 px-3 py-1 rounded-full text-xs font-medium mb-2">
-                                        {item.category}
-                                    </span>
-                                    <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                                    <p className="text-sm text-gray-200">{item.description}</p>
-                                </div>
-
-                                <div className="absolute top-4 right-4 bg-white/90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="text-center mt-12">
-                        <a
-                            href="/portfolio"
-                            className="inline-flex items-center border-2 border-teal-600 text-teal-600 px-8 py-4 rounded-full font-semibold hover:bg-teal-600 hover:text-white transform hover:scale-105 transition-all duration-300"
-                        >
-                            Vedi Portfolio Completo
                             <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>
@@ -483,7 +373,7 @@ export default function Hero() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div className="text-center group">
                             <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-3xl">🎯</span>
+                                <Target className="w-8 h-8 text-teal-600" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Precisione Millimetrica</h3>
                             <p className="text-gray-600 leading-relaxed">
@@ -493,8 +383,8 @@ export default function Hero() {
                         </div>
 
                         <div className="text-center group">
-                            <div className="bg-gradient-to-br from-green-100 to-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-3xl">🚀</span>
+                            <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Rocket className="w-8 h-8 text-teal-600" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Tempi Record</h3>
                             <p className="text-gray-600 leading-relaxed">
@@ -504,8 +394,8 @@ export default function Hero() {
                         </div>
 
                         <div className="text-center group">
-                            <div className="bg-gradient-to-br from-yellow-100 to-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-3xl">💡</span>
+                            <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Lightbulb className="w-8 h-8 text-teal-600" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Consulenza Gratuita</h3>
                             <p className="text-gray-600 leading-relaxed">
@@ -515,8 +405,8 @@ export default function Hero() {
                         </div>
 
                         <div className="text-center group">
-                            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-3xl">🌱</span>
+                            <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Leaf className="w-8 h-8 text-teal-600" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Sostenibilità</h3>
                             <p className="text-gray-600 leading-relaxed">
@@ -526,8 +416,8 @@ export default function Hero() {
                         </div>
 
                         <div className="text-center group">
-                            <div className="bg-gradient-to-br from-purple-100 to-pink-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-3xl">🛡️</span>
+                            <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <ShieldCheck className="w-8 h-8 text-teal-600" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Garanzia Totale</h3>
                             <p className="text-gray-600 leading-relaxed">
@@ -537,8 +427,8 @@ export default function Hero() {
                         </div>
 
                         <div className="text-center group">
-                            <div className="bg-gradient-to-br from-red-100 to-pink-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-3xl">❤️</span>
+                            <div className="bg-gradient-to-br from-teal-100 to-cyan-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Heart className="w-8 h-8 text-teal-600" />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Passione Artigianale</h3>
                             <p className="text-gray-600 leading-relaxed">
