@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Landmark, Sprout, Laptop, Rocket, Sparkles, Award, Clock, Lightbulb, Leaf, Target } from 'lucide-react';
 
 export default function Info() {
     const [activeStory, setActiveStory] = useState(0);
@@ -28,17 +29,17 @@ export default function Info() {
     }, []);
 
     const storyTimeline = [
-        { year: '1995', title: 'La Nascita', description: 'Fondiamo Idealstampa con l\'obiettivo di portare qualità artigianale nel mondo della stampa.', icon: '🌱' },
-        { year: '2005', title: 'Innovazione', description: 'Abbracciamo il digitale mantenendo sempre la qualità che ci contraddistingue.', icon: '💻' },
-        { year: '2015', title: 'Crescita', description: 'Diventiamo punto di riferimento per aziende e istituzioni del territorio.', icon: '🚀' },
-        { year: '2025', title: 'Oggi', description: 'Continuiamo a innovare con passione, qualità e rispetto per l\'ambiente.', icon: '✨' }
+        { year: '1995', title: 'La Nascita', description: 'Fondiamo Idealstampa con l\'obiettivo di portare qualità artigianale nel mondo della stampa.', icon: <Sprout className="w-8 h-8 text-teal-600" /> },
+        { year: '2005', title: 'Innovazione', description: 'Abbracciamo il digitale mantenendo sempre la qualità che ci contraddistingue.', icon: <Laptop className="w-8 h-8 text-teal-600" /> },
+        { year: '2015', title: 'Crescita', description: 'Diventiamo punto di riferimento per aziende e istituzioni del territorio.', icon: <Rocket className="w-8 h-8 text-teal-600" /> },
+        { year: '2025', title: 'Oggi', description: 'Continuiamo a innovare con passione, qualità e rispetto per l\'ambiente.', icon: <Sparkles className="w-8 h-8 text-teal-600" /> }
     ];
 
     const valori = [
-        { title: 'Qualità', description: 'Standard elevati in ogni progetto, senza compromessi.', icon: '🏆', gradient: 'from-green-500 to-emerald-600' },
-        { title: 'Affidabilità', description: 'Tempi certi e risultati garantiti, sempre.', icon: '⏰', gradient: 'from-blue-500 to-cyan-600' },
-        { title: 'Innovazione', description: 'Tecnologie moderne al servizio della tradizione.', icon: '💡', gradient: 'from-teal-500 to-cyan-600' },
-        { title: 'Sostenibilità', description: 'Materiali eco-friendly e processi rispettosi.', icon: '🌱', gradient: 'from-teal-500 to-cyan-600' }
+        { title: 'Qualità', description: 'Standard elevati in ogni progetto, senza compromessi.', icon: <Award className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
+        { title: 'Affidabilità', description: 'Tempi certi e risultati garantiti, sempre.', icon: <Clock className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
+        { title: 'Innovazione', description: 'Tecnologie moderne al servizio della tradizione.', icon: <Lightbulb className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
+        { title: 'Sostenibilità', description: 'Materiali eco-friendly e processi rispettosi.', icon: <Leaf className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' }
     ];
 
     return (
@@ -53,8 +54,8 @@ export default function Info() {
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div>
-                            <span className="inline-block bg-teal-100 text-teal-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                                🏛️ La Nostra Storia
+                            <span className="inline-flex items-center gap-2 bg-teal-100 text-teal-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                                <Landmark className="w-4 h-4" /> La Nostra Storia
                             </span>
                             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
                                 Da oltre 30 anni,
@@ -86,7 +87,7 @@ export default function Info() {
                             <img src="/chi-siamo.jpg" alt="Laboratorio Idealstampa" className="rounded-2xl shadow-2xl w-full h-auto object-cover transform hover:scale-105 transition-all duration-700" />
                             <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl animate-float">
                                 <div className="flex items-center space-x-4">
-                                    <div className="bg-teal-100 p-3 rounded-lg"><span className="text-2xl">🎯</span></div>
+                                    <div className="bg-teal-100 p-3 rounded-lg"><Target className="w-6 h-6 text-teal-600" /></div>
                                     <div><div className="font-bold text-gray-900">Mission</div><div className="text-sm text-gray-600">Eccellenza in ogni progetto</div></div>
                                 </div>
                             </div>
@@ -107,7 +108,7 @@ export default function Info() {
                                  className={`group bg-gradient-to-br from-white to-gray-50 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer ${activeStory === index ? 'ring-2 ring-teal-300 shadow-xl scale-105' : ''}`}
                                  onClick={() => setActiveStory(index)}>
                                 <div className="text-center">
-                                    <div className="text-4xl mb-3">{story.icon}</div>
+                                    <div className="mb-3 flex justify-center">{story.icon}</div>
                                     <div className="text-2xl font-bold text-teal-600 mb-2">{story.year}</div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-3">{story.title}</h3>
                                     <p className="text-sm text-gray-600 leading-relaxed">{story.description}</p>
@@ -148,12 +149,12 @@ export default function Info() {
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 text-white text-center lg:text-left">
                         <div>
-                            <div className="text-4xl mb-4">🎯</div>
+                            <div className="mb-4"><Target className="w-10 h-10" /></div>
                             <h3 className="text-2xl font-bold mb-4">La Nostra Mission</h3>
                             <p className="text-lg text-teal-100 leading-relaxed">Trasformare ogni progetto in un'esperienza di eccellenza, combinando tradizione artigianale e innovazione tecnologica.</p>
                         </div>
                         <div>
-                            <div className="text-4xl mb-4">🚀</div>
+                            <div className="mb-4"><Rocket className="w-10 h-10" /></div>
                             <h3 className="text-2xl font-bold mb-4">La Nostra Vision</h3>
                             <p className="text-lg text-teal-100 leading-relaxed">Essere il punto di riferimento nella stampa, riconosciuti per qualità e innovazione, portando l'eccellenza italiana nel mondo.</p>
                         </div>

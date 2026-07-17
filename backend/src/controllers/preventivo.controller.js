@@ -5,11 +5,11 @@ async function create(req, res, next) {
     const uploadedFilePath = req.file?.path || null;
 
     try {
-        const { nome, cognome, email, servizio } = req.body;
+        const { nome, cognome, email, quantita } = req.body;
         logger.info('Richiesta preventivo ricevuta:', {
             cliente: `${nome} ${cognome}`,
             email,
-            servizio,
+            quantita,
             hasFile: Boolean(req.file),
             fileName: req.file?.originalname
         });

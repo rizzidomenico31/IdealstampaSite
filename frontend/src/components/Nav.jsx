@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet } from "react-router-dom";
+import { Home, Users, Settings, Phone } from 'lucide-react';
 import Footer from "./Footer.jsx";
 
 export default function Nav() {
@@ -65,11 +66,10 @@ export default function Nav() {
     };
 
     const navLinks = [
-        { name: 'Home', href: '/', icon: '🏠' },
-        { name: 'Chi Siamo', href: '/info', icon: '👥' },
-        { name: 'Servizi', href: '/servizi', icon: '⚙️' },
-        { name: 'Portfolio', href: '/portfolio', icon: '💼' },
-        { name: 'Contatti', href: '/contatti', icon: '📞' },
+        { name: 'Home', href: '/', icon: <Home className="w-6 h-6" /> },
+        { name: 'Chi Siamo', href: '/info', icon: <Users className="w-6 h-6" /> },
+        { name: 'Servizi', href: '/servizi', icon: <Settings className="w-6 h-6" /> },
+        { name: 'Contatti', href: '/contatti', icon: <Phone className="w-6 h-6" /> },
     ];
 
     return (
@@ -226,7 +226,7 @@ export default function Nav() {
                                 className="flex items-center space-x-4 px-6 py-4 text-gray-700 hover:text-teal-600 hover:bg-teal-50 transition-all duration-300 group"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
-                                <span className="text-2xl group-hover:scale-110 transition-transform">
+                                <span className="text-teal-600 group-hover:scale-110 transition-transform">
                                     {link.icon}
                                 </span>
                                 <span className="text-lg font-medium">{link.name}</span>

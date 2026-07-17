@@ -31,7 +31,7 @@ function render(data, { hasFile = false } = {}) {
 
                 <p>Gentile <strong>${data.nome} ${data.cognome}</strong>,</p>
 
-                <p>abbiamo ricevuto la sua richiesta di preventivo per <strong>${data.servizio}</strong> ed è già in lavorazione nel nostro sistema.</p>
+                <p>abbiamo ricevuto la sua richiesta di preventivo ed è già in lavorazione nel nostro sistema.</p>
 
                 ${hasFile ? `
                 <div class="highlight" style="background: #e8f5e8; border-left: 4px solid #4caf50;">

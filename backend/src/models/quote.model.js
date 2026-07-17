@@ -18,30 +18,10 @@ const quoteSchema = new mongoose.Schema(
         telefono: { type: String, required: true, trim: true },
         azienda: { type: String, trim: true },
 
-        tipoProgetto: {
-            type: String,
-            required: true,
-            enum: ['business', 'marketing', 'eventi', 'editoria', 'packaging', 'altro']
-        },
-        servizio: {
-            type: String,
-            required: true,
-            enum: ['offset', 'digitale', 'grande-formato', 'packaging', 'editoria', 'finiture']
-        },
-        urgenza: { type: String, required: true, enum: ['urgente', 'normale', 'rilassato'] },
-
         quantita: { type: Number, required: true, min: 1, max: 1000000 },
-        formato: { type: String, required: true, trim: true },
-        colori: { type: String, required: true, enum: ['1+0', '1+1', '4+0', '4+1', '4+4', 'pantone'] },
-        carta: { type: String, required: true, trim: true },
-        pagine: { type: Number },
-
-        finiture: { type: [String], default: [] },
-        note: { type: String, trim: true, maxlength: 1000 },
-        budget: { type: String, enum: ['0-100', '100-300', '300-500', '500-1000', '1000-2000', '2000+'] },
+        note: { type: String, required: true, trim: true, maxlength: 2000 },
 
         privacy: { type: Boolean, required: true },
-        newsletter: { type: Boolean, default: false },
 
         file: { type: fileInfoSchema, default: null },
 

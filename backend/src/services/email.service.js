@@ -20,7 +20,7 @@ async function sendPreventivoEmails(formData, file) {
     const companyMail = {
         from: `"${formData.nome} ${formData.cognome}" <${config.smtp.user}>`,
         to: config.email.companyEmail,
-        subject: `🎯 Nuovo Preventivo: ${formData.servizio} - ${formData.nome} ${formData.cognome}${hasFile ? ' 📎' : ''}`,
+        subject: `🎯 Nuovo Preventivo - ${formData.nome} ${formData.cognome}${hasFile ? ' 📎' : ''}`,
         html: companyTemplate.render(formData, { hasAttachment: hasFile, fileName }),
         replyTo: formData.email,
         attachments: buildAttachments(file)
