@@ -37,6 +37,12 @@ const quoteSchema = new mongoose.Schema(
             sentAt: Date,
             error: String
         },
+        adminResponse: {
+            subject: String,
+            message: String,
+            sentAt: Date,
+            by: String
+        },
         meta: {
             ip: String,
             userAgent: String

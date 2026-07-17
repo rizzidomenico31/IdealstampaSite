@@ -72,6 +72,25 @@ export const adminApi = {
         })
 };
 
+export const quotesApi = {
+    list: (params = {}) => {
+        const qs = new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+        ).toString();
+        return apiFetch(`/api/admin/quotes${qs ? `?${qs}` : ''}`, { auth: true });
+    },
+    stats: () =>
+        apiFetch('/api/admin/quotes/stats', { auth: true }),
+    get: (id) =>
+        apiFetch(`/api/admin/quotes/${id}`, { auth: true }),
+    updateStatus: (id, status) =>
+        apiFetch(`/api/admin/quotes/${id}/status`, { method: 'PATCH', auth: true, body: { status } }),
+    respond: (id, { subject, message }) =>
+        apiFetch(`/api/admin/quotes/${id}/respond`, { method: 'POST', auth: true, body: { subject, message } }),
+    remove: (id) =>
+        apiFetch(`/api/admin/quotes/${id}`, { method: 'DELETE', auth: true })
+};
+
 export const usersApi = {
     list: () =>
         apiFetch('/api/admin/users', { auth: true }),
