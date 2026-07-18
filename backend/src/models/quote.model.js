@@ -22,6 +22,7 @@ const quoteSchema = new mongoose.Schema(
         note: { type: String, required: true, trim: true, maxlength: 2000 },
 
         privacy: { type: Boolean, required: true },
+        newsletter: { type: Boolean, default: false },
 
         file: { type: fileInfoSchema, default: null },
 

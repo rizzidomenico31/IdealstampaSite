@@ -3,6 +3,7 @@ const config = require('../config');
 const companyTemplate = require('../templates/preventivo-company.template');
 const clientTemplate = require('../templates/preventivo-client.template');
 const replyTemplate = require('../templates/preventivo-reply.template');
+const newsletterTemplate = require('../templates/newsletter.template');
 
 function buildAttachments(file) {
     if (!file) return [];
@@ -58,4 +59,17 @@ async function sendQuoteReply({ to, clientName, subject, message }) {
     return { messageId: result.messageId };
 }
 
-module.exports = { sendPreventivoEmails, sendQuoteReply };
+async function sendNewsletterEmail({ to, subject, title, message, unsubscribeUrl }) {
+    const transporter = getTransporter();
+    const mail = {
+        from: `"${config.email.fromName}" <${config.smtp.user}>`,
+        to,
+        subject,
+        html: newsletterTemplate.render({ title, message, unsubscribeUrl }),
+        replyTo: config.email.companyEmail
+    };
+    const result = await transporter.sendMail(mail);
+    return { messageId: result.messageId };
+}
+
+module.exports = { sendPreventivoEmails, sendQuoteReply, sendNewsletterEmail };

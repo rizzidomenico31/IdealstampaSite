@@ -13,7 +13,10 @@ const preventivoRules = [
         if (!isTrue) throw new Error('Devi accettare la privacy policy');
         return true;
     }),
-    body('fileName').optional().trim().isLength({ max: 255 }).escape()
+    body('fileName').optional().trim().isLength({ max: 255 }).escape(),
+    body('newsletter').optional().custom(value =>
+        value === true || value === 'true' || value === false || value === 'false' || value === undefined || value === ''
+    )
 ];
 
 function handleValidation(req, res, next) {

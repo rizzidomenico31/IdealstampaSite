@@ -91,6 +91,28 @@ export const quotesApi = {
         apiFetch(`/api/admin/quotes/${id}`, { method: 'DELETE', auth: true })
 };
 
+// Iscrizione pubblica dal footer (nessuna autenticazione)
+export const newsletterApi = {
+    subscribe: (email, nome) =>
+        apiFetch('/api/newsletter/subscribe', { method: 'POST', body: { email, nome } })
+};
+
+// Gestione newsletter lato admin
+export const adminNewsletterApi = {
+    stats: () =>
+        apiFetch('/api/admin/newsletter/stats', { auth: true }),
+    subscribers: (params = {}) => {
+        const qs = new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+        ).toString();
+        return apiFetch(`/api/admin/newsletter/subscribers${qs ? `?${qs}` : ''}`, { auth: true });
+    },
+    send: ({ subject, title, message, group }) =>
+        apiFetch('/api/admin/newsletter/send', { method: 'POST', auth: true, body: { subject, title, message, group } }),
+    removeSubscriber: (id) =>
+        apiFetch(`/api/admin/newsletter/subscribers/${id}`, { method: 'DELETE', auth: true })
+};
+
 export const usersApi = {
     list: () =>
         apiFetch('/api/admin/users', { auth: true }),

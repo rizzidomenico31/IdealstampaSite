@@ -25,4 +25,15 @@ const loginLimiter = rateLimit({
     }
 });
 
-module.exports = { preventivoLimiter, loginLimiter };
+const newsletterLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        message: 'Troppe iscrizioni da questo IP, riprova più tardi.'
+    }
+});
+
+module.exports = { preventivoLimiter, loginLimiter, newsletterLimiter };

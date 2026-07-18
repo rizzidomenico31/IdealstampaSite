@@ -80,7 +80,7 @@ export default function Preventivo() {
     const [submitStatus, setSubmitStatus] = useState(null);
     const [formData, setFormData] = useState({
         nome:'', cognome:'', email:'', telefono:'', azienda:'',
-        quantita:'', uploadedFile:null, note:'', privacy:false
+        quantita:'', uploadedFile:null, note:'', privacy:false, newsletter:false
     });
 
     const handleChange = (e) => {
@@ -117,7 +117,7 @@ export default function Preventivo() {
             else { const text = await response.text(); console.error('Risposta non JSON:', text); throw new Error('Errore del server.'); }
             if (response.ok && result.success) {
                 setSubmitStatus('success');
-                setFormData({ nome:'', cognome:'', email:'', telefono:'', azienda:'', quantita:'', uploadedFile:null, note:'', privacy:false });
+                setFormData({ nome:'', cognome:'', email:'', telefono:'', azienda:'', quantita:'', uploadedFile:null, note:'', privacy:false, newsletter:false });
                 setCurrentStep(1);
                 window.scrollTo({top: 0, behavior: 'smooth'});
             } else { throw new Error(result.message || 'Errore durante l\'invio'); }
@@ -216,10 +216,14 @@ export default function Preventivo() {
                                         <textarea name="note" required value={formData.note} onChange={handleChange} rows={5} className={`${inputClass} resize-none`} placeholder="Descrivi cosa vuoi stampare: tipo di prodotto, formato, materiali, tempistiche e qualsiasi altro dettaglio utile..."></textarea>
                                     </div>
 
-                                    <div className="pt-6 border-t border-gray-200">
+                                    <div className="pt-6 border-t border-gray-200 space-y-4">
                                         <label className="flex items-start space-x-3">
                                             <input type="checkbox" name="privacy" required checked={formData.privacy} onChange={handleChange} className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 mt-1" />
                                             <span className="text-sm text-gray-700">Accetto il trattamento dei dati personali secondo la{' '}<a href="/privacy" className="text-teal-600 hover:text-teal-700 underline">Privacy Policy</a> *</span>
+                                        </label>
+                                        <label className="flex items-start space-x-3">
+                                            <input type="checkbox" name="newsletter" checked={formData.newsletter} onChange={handleChange} className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 mt-1" />
+                                            <span className="text-sm text-gray-700">Acconsento a ricevere offerte, novità e comunicazioni di marketing via email da Idealstampa.</span>
                                         </label>
                                     </div>
                                 </div>

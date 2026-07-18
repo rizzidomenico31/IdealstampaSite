@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link2, Settings, MapPin, Heart } from 'lucide-react';
+import { Link2, Settings, MapPin, Heart, Mail } from 'lucide-react';
+import { newsletterApi } from '../services/api';
 
 export default function Footer() {
     const year = new Date().getFullYear();
@@ -60,6 +61,13 @@ export default function Footer() {
             </div>
 
             <div className="relative">
+                {/* Barra Newsletter */}
+                <div className="border-b border-gray-800">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                        <NewsletterSignup />
+                    </div>
+                </div>
+
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
 
@@ -204,5 +212,61 @@ export default function Footer() {
                 </a>
             </div>
         </footer>
+    );
+}
+
+function NewsletterSignup() {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState('idle'); // idle | loading | success | error
+    const [message, setMessage] = useState('');
+
+    const submit = async (e) => {
+        e.preventDefault();
+        if (!email.trim()) return;
+        setStatus('loading');
+        setMessage('');
+        try {
+            const res = await newsletterApi.subscribe(email.trim());
+            setStatus('success');
+            setMessage(res.message || 'Iscrizione confermata! Grazie.');
+            setEmail('');
+        } catch (err) {
+            setStatus('error');
+            setMessage(err.message || 'Iscrizione non riuscita. Riprova.');
+        }
+    };
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div className="flex items-start gap-4">
+                <div className="bg-teal-600/20 text-teal-400 p-3 rounded-xl shrink-0">
+                    <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold text-white">Iscriviti alla newsletter</h3>
+                    <p className="text-gray-400 text-sm mt-1">Offerte, novità e consigli di stampa direttamente nella tua casella. Niente spam.</p>
+                </div>
+            </div>
+
+            <form onSubmit={submit} className="w-full">
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                        type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                        placeholder="La tua email"
+                        className="flex-1 px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    />
+                    <button
+                        type="submit" disabled={status === 'loading'}
+                        className="px-6 py-3 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-medium transition disabled:opacity-60 whitespace-nowrap inline-flex items-center justify-center gap-2"
+                    >
+                        {status === 'loading' && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                        Iscriviti
+                    </button>
+                </div>
+                {message && (
+                    <p className={`mt-2 text-sm ${status === 'success' ? 'text-teal-400' : 'text-red-400'}`}>{message}</p>
+                )}
+            </form>
+        </div>
     );
 }

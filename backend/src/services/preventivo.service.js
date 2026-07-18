@@ -23,6 +23,7 @@ function buildQuoteDoc(formData, file, req) {
         quantita: parseInt(formData.quantita, 10),
         note: formData.note,
         privacy: toBool(formData.privacy),
+        newsletter: toBool(formData.newsletter),
         file: file ? {
             originalName: file.originalname,
             storedName: file.filename,
@@ -69,11 +70,28 @@ async function cleanupFile(filePath) {
     }
 }
 
+async function registerMarketingConsent(formData) {
+    if (!toBool(formData.newsletter)) return;
+    if (!database.isEnabled()) return;
+    try {
+        const newsletterService = require('./newsletter.service');
+        await newsletterService.subscribe({
+            email: formData.email,
+            nome: `${formData.nome || ''} ${formData.cognome || ''}`.trim(),
+            source: 'preventivo'
+        });
+    } catch (err) {
+        logger.warn('Iscrizione marketing da preventivo fallita:', err.message);
+    }
+}
+
 async function processPreventivo(formData, file, req) {
     if (file) formData.fileName = file.originalname;
 
     const doc = buildQuoteDoc(formData, file, req);
     const saved = await persistQuote(doc);
+
+    await registerMarketingConsent(formData);
 
     try {
         const result = await emailService.sendPreventivoEmails(formData, file);
