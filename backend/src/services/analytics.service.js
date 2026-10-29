@@ -55,6 +55,7 @@ async function getDashboardAnalytics({ days = 30 } = {}) {
             { $match: { 'pricing.finalTotal': { $gt: 0 } } },
             { $group: { _id: null, revenue: { $sum: '$pricing.finalTotal' } } }
         ]),
+        Quote.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
         Quote.aggregate([
             { $match: { createdAt: { $gte: start, $lte: end } } },
             {
