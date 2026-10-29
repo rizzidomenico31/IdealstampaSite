@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Landmark, Sprout, Laptop, Rocket, Sparkles, Award, Clock, Lightbulb, Leaf, Target } from 'lucide-react';
 
+const storyTimeline = [
+    { year: '1995', title: 'La Nascita', description: 'Fondiamo Idealstampa con l\'obiettivo di portare qualità artigianale nel mondo della stampa.', icon: <Sprout className="w-8 h-8 text-teal-600" /> },
+    { year: '2005', title: 'Innovazione', description: 'Abbracciamo il digitale mantenendo sempre la qualità che ci contraddistingue.', icon: <Laptop className="w-8 h-8 text-teal-600" /> },
+    { year: '2015', title: 'Crescita', description: 'Diventiamo punto di riferimento per aziende e istituzioni del territorio.', icon: <Rocket className="w-8 h-8 text-teal-600" /> },
+    { year: '2025', title: 'Oggi', description: 'Continuiamo a innovare con passione, qualità e rispetto per l\'ambiente.', icon: <Sparkles className="w-8 h-8 text-teal-600" /> }
+];
+
+const valori = [
+    { title: 'Qualità', description: 'Standard elevati in ogni progetto, senza compromessi.', icon: <Award className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
+    { title: 'Affidabilità', description: 'Tempi certi e risultati garantiti, sempre.', icon: <Clock className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
+    { title: 'Innovazione', description: 'Tecnologie moderne al servizio della tradizione.', icon: <Lightbulb className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
+    { title: 'Sostenibilità', description: 'Materiali eco-friendly e processi rispettosi.', icon: <Leaf className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' }
+];
+
 export default function Info() {
     const [activeStory, setActiveStory] = useState(0);
     const [isVisible, setIsVisible] = useState({});
@@ -27,20 +41,6 @@ export default function Info() {
         }, 4000);
         return () => clearInterval(interval);
     }, []);
-
-    const storyTimeline = [
-        { year: '1995', title: 'La Nascita', description: 'Fondiamo Idealstampa con l\'obiettivo di portare qualità artigianale nel mondo della stampa.', icon: <Sprout className="w-8 h-8 text-teal-600" /> },
-        { year: '2005', title: 'Innovazione', description: 'Abbracciamo il digitale mantenendo sempre la qualità che ci contraddistingue.', icon: <Laptop className="w-8 h-8 text-teal-600" /> },
-        { year: '2015', title: 'Crescita', description: 'Diventiamo punto di riferimento per aziende e istituzioni del territorio.', icon: <Rocket className="w-8 h-8 text-teal-600" /> },
-        { year: '2025', title: 'Oggi', description: 'Continuiamo a innovare con passione, qualità e rispetto per l\'ambiente.', icon: <Sparkles className="w-8 h-8 text-teal-600" /> }
-    ];
-
-    const valori = [
-        { title: 'Qualità', description: 'Standard elevati in ogni progetto, senza compromessi.', icon: <Award className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
-        { title: 'Affidabilità', description: 'Tempi certi e risultati garantiti, sempre.', icon: <Clock className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
-        { title: 'Innovazione', description: 'Tecnologie moderne al servizio della tradizione.', icon: <Lightbulb className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' },
-        { title: 'Sostenibilità', description: 'Materiali eco-friendly e processi rispettosi.', icon: <Leaf className="w-6 h-6" />, gradient: 'from-teal-500 to-cyan-600' }
-    ];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50">

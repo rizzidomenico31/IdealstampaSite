@@ -3,6 +3,7 @@ const config = require('./src/config');
 const logger = require('./src/utils/logger');
 const database = require('./src/config/database');
 const { verifyTransporter } = require('./src/config/email');
+const auditService = require('./src/services/audit.service');
 
 async function bootstrap() {
     if (database.isEnabled()) {
@@ -15,6 +16,15 @@ async function bootstrap() {
     }
 
     verifyTransporter();
+
+    // Pulizia audit log giornaliera
+    if (auditService.isEnabled()) {
+        setInterval(() => {
+            auditService.cleanup().catch(err => logger.error('Errore pulizia audit:', err));
+        }, 24 * 60 * 60 * 1000);
+        // Esegui subito una pulizia all'avvio (non bloccante)
+        auditService.cleanup().catch(err => logger.error('Errore pulizia audit iniziale:', err));
+    }
 
     const server = app.listen(config.port, '0.0.0.0', () => {
         logger.success(`Server avviato sulla porta ${config.port} (${config.env})`);

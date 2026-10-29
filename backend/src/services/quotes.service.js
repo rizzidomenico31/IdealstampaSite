@@ -1,5 +1,6 @@
 const database = require('../config/database');
 const emailService = require('./email.service');
+const aiService = require('./ai.service');
 const logger = require('../utils/logger');
 
 const VALID_STATUSES = ['pending', 'processing', 'quoted', 'accepted', 'rejected', 'archived'];
@@ -30,6 +31,42 @@ async function findOrThrow(id) {
     }
     if (!quote) throw new ServiceError('Preventivo non trovato', 404, 'NOT_FOUND');
     return quote;
+}
+
+function buildSimilarityFilter(quote) {
+    // Trova preventivi simili: stessa email, parola chiave prodotto, o range quantità simile
+    const category = aiService.detectProductCategory(quote.note);
+    const quantita = Number(quote.quantita) || 0;
+    const filters = [];
+
+    if (quote.email) {
+        filters.push({ email: quote.email, _id: { $ne: quote._id } });
+    }
+
+    const textQuery = category
+        ? { note: { $regex: category.split(' ').join('|'), $options: 'i' }, _id: { $ne: quote._id } }
+        : null;
+
+    const qtyQuery = quantita > 0
+        ? { quantita: { $gte: Math.floor(quantita * 0.5), $lte: Math.ceil(quantita * 2) }, _id: { $ne: quote._id } }
+        : null;
+
+    if (textQuery) filters.push(textQuery);
+    if (qtyQuery) filters.push(qtyQuery);
+    return filters;
+}
+
+async function findSimilarQuotes(quote, limit = 10) {
+    const Quote = getModel();
+    const filters = buildSimilarityFilter(quote);
+    if (filters.length === 0) return [];
+
+    const results = await Quote.find({ $or: filters })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .lean();
+
+    return results;
 }
 
 async function listQuotes({ status, search, page = 1, limit = 50 } = {}) {
@@ -94,6 +131,46 @@ async function updateStatus(id, status) {
     return serialize(quote.toObject());
 }
 
+async function updatePricing(id, { unitPrice, setupCost, discount, finalTotal }) {
+    const quote = await findOrThrow(id);
+
+    const pricing = { ...quote.pricing?.toObject?.() || quote.pricing || {} };
+
+    if (unitPrice !== undefined) pricing.unitPrice = Math.max(0, Number(unitPrice) || 0);
+    if (setupCost !== undefined) pricing.setupCost = Math.max(0, Number(setupCost) || 0);
+    if (discount !== undefined) pricing.discount = Math.min(100, Math.max(0, Number(discount) || 0));
+
+    // Calcola automaticamente il totale se manca
+    if (finalTotal !== undefined) {
+        pricing.finalTotal = Math.max(0, Number(finalTotal) || 0);
+    } else if (unitPrice !== undefined || setupCost !== undefined || discount !== undefined) {
+        const qty = Math.max(1, Number(quote.quantita) || 1);
+        const subtotal = (pricing.unitPrice || 0) * qty + (pricing.setupCost || 0);
+        const discounted = subtotal * (1 - (pricing.discount || 0) / 100);
+        pricing.finalTotal = Math.round(discounted * 100) / 100;
+    }
+
+    quote.pricing = pricing;
+    await quote.save();
+    return serialize(quote.toObject());
+}
+
+async function analyzeQuote(id) {
+    const Quote = getModel();
+    const quote = await findOrThrow(id);
+
+    quote.aiAnalysis = { status: 'pending' };
+    await quote.save();
+
+    const similar = await findSimilarQuotes(quote.toObject(), 10);
+    const analysis = await aiService.analyzeQuote(quote.toObject(), similar);
+
+    quote.aiAnalysis = analysis;
+    await quote.save();
+
+    return serialize(quote.toObject());
+}
+
 async function respond(id, { subject, message }, adminUsername) {
     if (!message || !message.trim()) {
         throw new ServiceError('Il messaggio di risposta è obbligatorio', 400, 'EMPTY_MESSAGE');
@@ -145,6 +222,8 @@ function serialize(q) {
         privacy: q.privacy,
         file: q.file || null,
         status: q.status,
+        pricing: q.pricing || null,
+        aiAnalysis: q.aiAnalysis || null,
         adminResponse: q.adminResponse || null,
         createdAt: q.createdAt,
         updatedAt: q.updatedAt

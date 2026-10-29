@@ -12,6 +12,11 @@ function StatusBadge({ status }) {
     );
 }
 
+function currency(n) {
+    if (n === null || n === undefined || Number.isNaN(n)) return '—';
+    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(n);
+}
+
 export default function AdminQuotes() {
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -20,6 +25,8 @@ export default function AdminQuotes() {
     const [search, setSearch] = useState('');
 
     const [detailTarget, setDetailTarget] = useState(null);
+    const [pricingTarget, setPricingTarget] = useState(null);
+    const [analyzeTarget, setAnalyzeTarget] = useState(null);
     const [respondTarget, setRespondTarget] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
@@ -37,16 +44,20 @@ export default function AdminQuotes() {
     }, [statusFilter, search]);
 
     useEffect(() => {
-        const t = setTimeout(load, 250); // debounce ricerca
+        const t = setTimeout(load, 250);
         return () => clearTimeout(t);
     }, [load]);
+
+    const updateQuoteInList = (updated) => {
+        setQuotes(prev => prev.map(q => q.id === updated.id ? updated : q));
+    };
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Preventivi</h1>
-                    <p className="text-slate-500 text-sm mt-1">Visualizza, rispondi e gestisci tutte le richieste ricevute.</p>
+                    <p className="text-slate-500 text-sm mt-1">Visualizza, rispondi, stima prezzi e gestisci tutte le richieste.</p>
                 </div>
                 <div className="relative">
                     <svg className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +92,8 @@ export default function AdminQuotes() {
                             <tr>
                                 <Th>Cliente</Th>
                                 <Th>Quantità</Th>
-                                <Th>File</Th>
+                                <Th>Prezzo AI</Th>
+                                <Th>Prezzo finale</Th>
                                 <Th>Stato</Th>
                                 <Th>Ricevuto</Th>
                                 <Th className="text-right">Azioni</Th>
@@ -89,9 +101,9 @@ export default function AdminQuotes() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr><td colSpan={6} className="text-center py-12 text-slate-500">Caricamento...</td></tr>
+                                <tr><td colSpan={7} className="text-center py-12 text-slate-500">Caricamento...</td></tr>
                             ) : quotes.length === 0 ? (
-                                <tr><td colSpan={6} className="text-center py-12 text-slate-500">Nessun preventivo trovato</td></tr>
+                                <tr><td colSpan={7} className="text-center py-12 text-slate-500">Nessun preventivo trovato</td></tr>
                             ) : quotes.map(q => (
                                 <tr key={q.id} className="hover:bg-slate-50">
                                     <Td>
@@ -101,12 +113,26 @@ export default function AdminQuotes() {
                                     </Td>
                                     <Td className="text-sm text-slate-700">{q.quantita?.toLocaleString('it-IT')} pz</Td>
                                     <Td>
-                                        {q.file ? (
-                                            <span className="inline-flex items-center gap-1 text-xs text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-full">
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                                                Sì
+                                        {q.aiAnalysis?.status === 'completed' ? (
+                                            <span className="text-sm text-slate-700">
+                                                {currency(q.aiAnalysis.estimatedMarketPriceMin)} – {currency(q.aiAnalysis.estimatedMarketPriceMax)}
                                             </span>
-                                        ) : <span className="text-xs text-slate-400">—</span>}
+                                        ) : q.aiAnalysis?.status === 'pending' ? (
+                                            <span className="text-xs text-amber-600">in analisi...</span>
+                                        ) : (
+                                            <button onClick={() => setAnalyzeTarget(q)} className="text-xs text-teal-600 hover:text-teal-700 font-medium">
+                                                Stima AI
+                                            </button>
+                                        )}
+                                    </Td>
+                                    <Td>
+                                        {q.pricing?.finalTotal ? (
+                                            <span className="text-sm font-medium text-slate-800">{currency(q.pricing.finalTotal)}</span>
+                                        ) : (
+                                            <button onClick={() => setPricingTarget(q)} className="text-xs text-slate-500 hover:text-slate-700 font-medium">
+                                                Aggiungi prezzo
+                                            </button>
+                                        )}
                                     </Td>
                                     <Td><StatusBadge status={q.status} /></Td>
                                     <Td className="text-sm text-slate-600 whitespace-nowrap">{formatDate(q.createdAt)}</Td>
@@ -125,8 +151,20 @@ export default function AdminQuotes() {
             <DetailModal
                 quote={detailTarget}
                 onClose={() => setDetailTarget(null)}
-                onChanged={() => { setDetailTarget(null); load(); }}
+                onChanged={(updated) => { setDetailTarget(null); if (updated) updateQuoteInList(updated); else load(); }}
                 onRespond={(q) => { setDetailTarget(null); setRespondTarget(q); }}
+                onPricing={(q) => { setDetailTarget(null); setPricingTarget(q); }}
+                onAnalyze={(q) => { setDetailTarget(null); setAnalyzeTarget(q); }}
+            />
+            <PricingModal
+                quote={pricingTarget}
+                onClose={() => setPricingTarget(null)}
+                onSaved={(updated) => { setPricingTarget(null); updateQuoteInList(updated); }}
+            />
+            <AnalyzeModal
+                quote={analyzeTarget}
+                onClose={() => setAnalyzeTarget(null)}
+                onSaved={(updated) => { setAnalyzeTarget(null); updateQuoteInList(updated); }}
             />
             <RespondModal
                 quote={respondTarget}
@@ -165,7 +203,7 @@ function FilterChip({ active, onClick, children }) {
 }
 
 // ───────────────────────────── Dettaglio + cambio stato
-function DetailModal({ quote, onClose, onChanged, onRespond }) {
+function DetailModal({ quote, onClose, onChanged, onRespond, onPricing, onAnalyze }) {
     const [status, setStatus] = useState('pending');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
@@ -179,8 +217,8 @@ function DetailModal({ quote, onClose, onChanged, onRespond }) {
         setSaving(true);
         setError('');
         try {
-            await quotesApi.updateStatus(quote.id, status);
-            onChanged();
+            const res = await quotesApi.updateStatus(quote.id, status);
+            onChanged(res.quote);
         } catch (err) {
             setError(err.message || 'Errore aggiornamento stato');
         } finally {
@@ -207,6 +245,9 @@ function DetailModal({ quote, onClose, onChanged, onRespond }) {
                     <Info label="Quantità" value={`${quote.quantita?.toLocaleString('it-IT')} pezzi`} />
                     <Info label="File allegato" value={quote.file ? (quote.file.originalName || 'File allegato') : 'Nessuno'} />
                 </Section>
+
+                <PricingSection quote={quote} onEdit={() => onPricing(quote)} />
+                <AiSection quote={quote} onAnalyze={() => onAnalyze(quote)} />
 
                 {quote.note && (
                     <div>
@@ -244,13 +285,224 @@ function DetailModal({ quote, onClose, onChanged, onRespond }) {
 
                 {error && <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <div className="flex flex-wrap justify-end gap-2 pt-2 border-t border-slate-100">
                     <button onClick={onClose} className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition text-sm">Chiudi</button>
+                    <button onClick={() => onPricing(quote)} className="px-4 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-medium transition">Prezzi</button>
+                    <button onClick={() => onAnalyze(quote)} className="px-4 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-medium transition">Stima AI</button>
                     <button
                         onClick={() => onRespond(quote)}
                         className="px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white text-sm font-medium shadow-md shadow-teal-500/20 transition"
                     >
                         Rispondi al cliente
+                    </button>
+                </div>
+            </div>
+        </Modal>
+    );
+}
+
+function PricingSection({ quote, onEdit }) {
+    if (!quote.pricing?.finalTotal) {
+        return (
+            <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
+                <div className="flex items-center justify-between">
+                    <span className="text-sm text-amber-800">Nessun prezzo inserito</span>
+                    <button onClick={onEdit} className="text-sm font-medium text-amber-800 hover:text-amber-900">Aggiungi →</button>
+                </div>
+            </div>
+        );
+    }
+    return (
+        <Section title="Prezzi preventivo">
+            <Info label="Prezzo unitario" value={currency(quote.pricing.unitPrice)} />
+            <Info label="Costi impostazione" value={currency(quote.pricing.setupCost)} />
+            {quote.pricing.discount > 0 && <Info label="Sconto" value={`${quote.pricing.discount}%`} />}
+            <Info label="Totale finale" value={currency(quote.pricing.finalTotal)} />
+        </Section>
+    );
+}
+
+function AiSection({ quote, onAnalyze }) {
+    const a = quote.aiAnalysis;
+    if (!a || a.status === 'none') {
+        return (
+            <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
+                <div className="flex items-center justify-between">
+                    <span className="text-sm text-indigo-800">Analisi di mercato non ancora eseguita</span>
+                    <button onClick={onAnalyze} className="text-sm font-medium text-indigo-800 hover:text-indigo-900">Analizza con AI →</button>
+                </div>
+            </div>
+        );
+    }
+    if (a.status === 'pending') {
+        return <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">Analisi AI in corso...</div>;
+    }
+    return (
+        <div className="p-4 rounded-lg bg-indigo-50/60 border border-indigo-100 space-y-2">
+            <div className="flex items-center justify-between">
+                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Stima di mercato AI</div>
+                <ConfidenceBadge confidence={a.confidence} />
+            </div>
+            <div className="text-lg font-bold text-slate-900">
+                {currency(a.estimatedMarketPriceMin)} – {currency(a.estimatedMarketPriceMax)}
+            </div>
+            <p className="text-sm text-slate-700">{a.reasoning}</p>
+            {a.factors?.length > 0 && (
+                <ul className="text-xs text-slate-600 list-disc list-inside space-y-0.5">
+                    {a.factors.map((f, i) => <li key={i}>{f}</li>)}
+                </ul>
+            )}
+            {a.warnings?.length > 0 && (
+                <div className="mt-2 space-y-1">
+                    {a.warnings.map((w, i) => (
+                        <div key={i} className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">⚠ {w}</div>
+                    ))}
+                </div>
+            )}
+            {a.status === 'failed' && a.error && (
+                <div className="text-xs text-red-700">Errore: {a.error}</div>
+            )}
+            <button onClick={onAnalyze} className="text-xs text-indigo-700 hover:text-indigo-900 font-medium">Ricalcola stima</button>
+        </div>
+    );
+}
+
+function ConfidenceBadge({ confidence }) {
+    const map = {
+        low: { label: 'Bassa confidenza', cls: 'bg-slate-100 text-slate-600 border-slate-200' },
+        medium: { label: 'Media confidenza', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
+        high: { label: 'Alta confidenza', cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' }
+    };
+    const c = map[confidence] || map.medium;
+    return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${c.cls}`}>{c.label}</span>;
+}
+
+// ───────────────────────────── Pricing
+function PricingModal({ quote, onClose, onSaved }) {
+    const [unitPrice, setUnitPrice] = useState('');
+    const [setupCost, setSetupCost] = useState('');
+    const [discount, setDiscount] = useState('');
+    const [finalTotal, setFinalTotal] = useState('');
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (quote) {
+            setUnitPrice(quote.pricing?.unitPrice ?? '');
+            setSetupCost(quote.pricing?.setupCost ?? '');
+            setDiscount(quote.pricing?.discount ?? '');
+            setFinalTotal(quote.pricing?.finalTotal ?? '');
+            setError('');
+        }
+    }, [quote]);
+
+    if (!quote) return null;
+
+    const qty = Math.max(1, Number(quote.quantita) || 1);
+
+    const recalc = () => {
+        const up = Number(unitPrice) || 0;
+        const sc = Number(setupCost) || 0;
+        const disc = Number(discount) || 0;
+        const subtotal = up * qty + sc;
+        return Math.round(subtotal * (1 - disc / 100) * 100) / 100;
+    };
+
+    const save = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        setError('');
+        try {
+            const body = {
+                unitPrice: unitPrice === '' ? undefined : Number(unitPrice),
+                setupCost: setupCost === '' ? undefined : Number(setupCost),
+                discount: discount === '' ? undefined : Number(discount),
+                finalTotal: finalTotal === '' ? recalc() : Number(finalTotal)
+            };
+            const res = await quotesApi.updatePricing(quote.id, body);
+            onSaved(res.quote);
+        } catch (err) {
+            setError(err.message || 'Errore salvataggio prezzi');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <Modal open={Boolean(quote)} onClose={onClose} title={`Prezzi - ${quote.nome} ${quote.cognome}`} size="lg">
+            <form onSubmit={save} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Prezzo unitario (€)</label>
+                        <input type="number" min="0" step="0.01" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Costi impostazione (€)</label>
+                        <input type="number" min="0" step="0.01" value={setupCost} onChange={(e) => setSetupCost(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Sconto (%)</label>
+                        <input type="number" min="0" max="100" step="0.01" value={discount} onChange={(e) => setDiscount(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Totale finale (€)</label>
+                        <input type="number" min="0" step="0.01" value={finalTotal} onChange={(e) => setFinalTotal(e.target.value)} placeholder={currency(recalc())} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none text-sm" />
+                    </div>
+                </div>
+                <div className="text-xs text-slate-500">Totale calcolato automaticamente: <strong>{currency(recalc())}</strong> su {qty.toLocaleString('it-IT')} pz</div>
+
+                {error && <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+
+                <div className="flex justify-end gap-2 pt-2">
+                    <button type="button" onClick={onClose} disabled={saving} className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition text-sm disabled:opacity-60">Annulla</button>
+                    <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white text-sm font-medium shadow-md shadow-teal-500/20 transition disabled:opacity-60 inline-flex items-center gap-2">
+                        {saving && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                        Salva prezzi
+                    </button>
+                </div>
+            </form>
+        </Modal>
+    );
+}
+
+// ───────────────────────────── Analyze AI
+function AnalyzeModal({ quote, onClose, onSaved }) {
+    const [analyzing, setAnalyzing] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => { if (quote) { setError(''); } }, [quote]);
+
+    if (!quote) return null;
+
+    const run = async () => {
+        setAnalyzing(true);
+        setError('');
+        try {
+            const res = await quotesApi.analyze(quote.id);
+            onSaved(res.quote);
+        } catch (err) {
+            setError(err.message || 'Errore analisi AI');
+            setAnalyzing(false);
+        }
+    };
+
+    return (
+        <Modal open={Boolean(quote)} onClose={onClose} title="Analisi di mercato con AI" size="md">
+            <div className="space-y-4">
+                <p className="text-sm text-slate-600">
+                    L'AI confronta questo preventivo con richieste simili e con i prezzi di mercato tipici della tipografia italiana per stimare una fascia di prezzo competitiva.
+                </p>
+                <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700">
+                    <strong>Cliente:</strong> {quote.nome} {quote.cognome}<br />
+                    <strong>Quantità:</strong> {quote.quantita?.toLocaleString('it-IT')} pz<br />
+                    <strong>Note:</strong> {quote.note?.substring(0, 120)}{quote.note?.length > 120 ? '...' : ''}
+                </div>
+                {error && <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+                <div className="flex justify-end gap-2 pt-2">
+                    <button onClick={onClose} disabled={analyzing} className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition text-sm disabled:opacity-60">Chiudi</button>
+                    <button onClick={run} disabled={analyzing} className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white text-sm font-medium shadow-md shadow-indigo-500/20 transition disabled:opacity-60 inline-flex items-center gap-2">
+                        {analyzing && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                        {analyzing ? 'Analisi in corso...' : 'Avvia analisi'}
                     </button>
                 </div>
             </div>

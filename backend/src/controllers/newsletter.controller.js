@@ -1,4 +1,5 @@
 const newsletterService = require('../services/newsletter.service');
+const auditService = require('../services/audit.service');
 
 function handleServiceError(err, res, next) {
     if (err && err.status) {
@@ -62,6 +63,13 @@ async function send(req, res, next) {
             { subject, title, message, group },
             req.admin?.username
         );
+        await auditService.log({
+            actor: req.admin,
+            action: 'newsletter_sent',
+            target: { type: 'system', summary: `Newsletter inviata a ${result.sent}/${result.total}` },
+            metadata: { subject, group, ...result },
+            req
+        });
         res.json({ success: true, ...result });
     } catch (err) { return handleServiceError(err, res, next); }
 }
@@ -69,6 +77,12 @@ async function send(req, res, next) {
 async function removeSubscriber(req, res, next) {
     try {
         const result = await newsletterService.deleteSubscriber(req.params.id);
+        await auditService.log({
+            actor: req.admin,
+            action: 'subscriber_deleted',
+            target: { type: 'subscriber', id: result.id, summary: 'Iscritto eliminato' },
+            req
+        });
         res.json({ success: true, ...result });
     } catch (err) { return handleServiceError(err, res, next); }
 }

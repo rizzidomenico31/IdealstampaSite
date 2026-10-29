@@ -75,6 +75,19 @@ const config = {
         cacheDurationMs: toInt(process.env.GOOGLE_CACHE_MS, 6 * 60 * 60 * 1000)
     },
 
+    openai: {
+        apiKey: process.env.OPENAI_API_KEY || '',
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+        maxTokens: toInt(process.env.OPENAI_MAX_TOKENS, 1500),
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.3')
+    },
+
+    audit: {
+        enabled: toBool(process.env.AUDIT_LOG_ENABLED, true),
+        retentionDays: toInt(process.env.AUDIT_RETENTION_DAYS, 90)
+    },
+
     mongo: {
         uri: process.env.MONGO_URI || '',
         dbName: process.env.MONGO_DB_NAME || 'idealstampa',

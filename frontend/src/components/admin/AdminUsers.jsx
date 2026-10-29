@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { usersApi } from '../../services/api';
 import Modal from './Modal';
-import PasswordField, { isPasswordValid } from './PasswordField';
+import PasswordField from './PasswordField';
+import { isPasswordValid } from '../../utils/password';
 
 const ROLE_LABELS = {
     superadmin: { label: 'Super Admin', cls: 'bg-purple-100 text-purple-700 border-purple-200' },

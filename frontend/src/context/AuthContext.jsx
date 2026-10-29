@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { adminApi, getToken, setToken, clearToken } from '../services/api';
-
-const AuthContext = createContext(null);
+import { AuthContext } from './authContext';
 
 export function AuthProvider({ children }) {
     const [admin, setAdmin] = useState(null);
@@ -9,7 +8,7 @@ export function AuthProvider({ children }) {
 
     const logout = useCallback(async ({ silent = false } = {}) => {
         if (!silent) {
-            try { await adminApi.logout(); } catch (_) { /* best effort */ }
+            try { await adminApi.logout(); } catch { /* best effort */ }
         }
         clearToken();
         setAdmin(null);
@@ -60,10 +59,4 @@ export function AuthProvider({ children }) {
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error('useAuth deve essere usato dentro <AuthProvider>');
-    return ctx;
 }

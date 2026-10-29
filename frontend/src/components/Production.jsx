@@ -1,5 +1,162 @@
 import { useState, useEffect } from 'react';
 
+
+const processSteps = [
+    {
+        id: 1,
+        title: "Consulenza Iniziale",
+        subtitle: "Ascoltiamo le tue esigenze",
+        description: "Analizziamo insieme il tuo progetto per capire obiettivi, target e budget. Ti guidiamo nella scelta della soluzione più adatta.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+            </svg>
+        ),
+        details: [
+            "Analisi delle esigenze specifiche",
+            "Definizione obiettivi e target",
+            "Valutazione budget disponibile",
+            "Consigli su materiali e formati"
+        ],
+        duration: "30-60 min",
+        gradient: "from-blue-500 to-indigo-600"
+    },
+    {
+        id: 2,
+        title: "Preventivo Dettagliato",
+        subtitle: "Trasparenza nei costi",
+        description: "Elaboriamo un preventivo completo e dettagliato, spiegando ogni voce di costo. Nessuna sorpresa, tutto chiaro fin dall'inizio.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+        ),
+        details: [
+            "Preventivo gratuito e senza impegno",
+            "Dettaglio di ogni voce di costo",
+            "Opzioni alternative per il budget",
+            "Tempi di consegna garantiti"
+        ],
+        duration: "24h",
+        gradient: "from-green-500 to-emerald-600"
+    },
+    {
+        id: 3,
+        title: "Preparazione File",
+        subtitle: "Ottimizzazione per la stampa",
+        description: "I nostri tecnici verificano e ottimizzano i tuoi file per garantire il miglior risultato di stampa possibile.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+        ),
+        details: [
+            "Controllo risoluzione e colori",
+            "Verifica margini e al vivo",
+            "Ottimizzazione per il tipo di stampa",
+            "Correzione eventuali problemi"
+        ],
+        duration: "2-4h",
+        gradient: "from-purple-500 to-violet-600"
+    },
+    {
+        id: 4,
+        title: "Prova di Stampa",
+        subtitle: "Approvazione prima della produzione",
+        description: "Ti forniamo una prova fisica o digitale del lavoro finale per la tua approvazione prima di procedere con la tiratura completa.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+        ),
+        details: [
+            "Prova su carta del progetto finale",
+            "Verifica colori e qualità",
+            "Possibilità di modifiche",
+            "Approvazione definitiva"
+        ],
+        duration: "1-2 giorni",
+        gradient: "from-orange-500 to-red-600"
+    },
+    {
+        id: 5,
+        title: "Produzione",
+        subtitle: "Stampa con tecnologie avanzate",
+        description: "Avviamo la produzione utilizzando le migliori tecnologie di stampa offset e digitale, con controllo qualità costante.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2m-7 10l2 2 4-4" />
+            </svg>
+        ),
+        details: [
+            "Stampa con macchine professionali",
+            "Controllo qualità in tempo reale",
+            "Utilizzo di inchiostri premium",
+            "Monitoraggio di ogni fase"
+        ],
+        duration: "1-5 giorni",
+        gradient: "from-teal-500 to-cyan-600"
+    },
+    {
+        id: 6,
+        title: "Finiture e Lavorazioni",
+        subtitle: "L'arte del dettaglio",
+        description: "Applichiamo tutte le lavorazioni speciali: taglio, piega, plastificazione, rilegatura e ogni finitura richiesta.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+        ),
+        details: [
+            "Taglio di precisione",
+            "Plastificazione e verniciature",
+            "Rilegature personalizzate",
+            "Finiture speciali su richiesta"
+        ],
+        duration: "1-3 giorni",
+        gradient: "from-pink-500 to-rose-600"
+    },
+    {
+        id: 7,
+        title: "Controllo Qualità",
+        subtitle: "Perfezione garantita",
+        description: "Ogni pezzo viene ispezionato individualmente per garantire la massima qualità prima della consegna finale.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+        ),
+        details: [
+            "Ispezione qualità su ogni pezzo",
+            "Verifica conformità specifiche",
+            "Controllo finale pre-consegna",
+            "Garanzia soddisfazione 100%"
+        ],
+        duration: "2-4h",
+        gradient: "from-emerald-500 to-teal-600"
+    },
+    {
+        id: 8,
+        title: "Confezionamento e Consegna",
+        subtitle: "Cura fino alla destinazione",
+        description: "Confezioniamo tutto con cura per proteggere il lavoro durante il trasporto e consegniamo puntualmente.",
+        icon: (
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 1L5.5 3M15 1l3.5 2" />
+            </svg>
+        ),
+        details: [
+            "Imballaggio professionale",
+            "Protezione durante il trasporto",
+            "Consegna nei tempi concordati",
+            "Tracking e comunicazione costante"
+        ],
+        duration: "Stesso giorno",
+        gradient: "from-indigo-500 to-purple-600"
+    }
+];
+
 export default function Production() {
     const [activeStep, setActiveStep] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
@@ -27,162 +184,6 @@ export default function Production() {
 
         return () => observer.disconnect();
     }, []);
-
-    const processSteps = [
-        {
-            id: 1,
-            title: "Consulenza Iniziale",
-            subtitle: "Ascoltiamo le tue esigenze",
-            description: "Analizziamo insieme il tuo progetto per capire obiettivi, target e budget. Ti guidiamo nella scelta della soluzione più adatta.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                </svg>
-            ),
-            details: [
-                "Analisi delle esigenze specifiche",
-                "Definizione obiettivi e target",
-                "Valutazione budget disponibile",
-                "Consigli su materiali e formati"
-            ],
-            duration: "30-60 min",
-            gradient: "from-blue-500 to-indigo-600"
-        },
-        {
-            id: 2,
-            title: "Preventivo Dettagliato",
-            subtitle: "Trasparenza nei costi",
-            description: "Elaboriamo un preventivo completo e dettagliato, spiegando ogni voce di costo. Nessuna sorpresa, tutto chiaro fin dall'inizio.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-            ),
-            details: [
-                "Preventivo gratuito e senza impegno",
-                "Dettaglio di ogni voce di costo",
-                "Opzioni alternative per il budget",
-                "Tempi di consegna garantiti"
-            ],
-            duration: "24h",
-            gradient: "from-green-500 to-emerald-600"
-        },
-        {
-            id: 3,
-            title: "Preparazione File",
-            subtitle: "Ottimizzazione per la stampa",
-            description: "I nostri tecnici verificano e ottimizzano i tuoi file per garantire il miglior risultato di stampa possibile.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-            ),
-            details: [
-                "Controllo risoluzione e colori",
-                "Verifica margini e al vivo",
-                "Ottimizzazione per il tipo di stampa",
-                "Correzione eventuali problemi"
-            ],
-            duration: "2-4h",
-            gradient: "from-purple-500 to-violet-600"
-        },
-        {
-            id: 4,
-            title: "Prova di Stampa",
-            subtitle: "Approvazione prima della produzione",
-            description: "Ti forniamo una prova fisica o digitale del lavoro finale per la tua approvazione prima di procedere con la tiratura completa.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-            ),
-            details: [
-                "Prova su carta del progetto finale",
-                "Verifica colori e qualità",
-                "Possibilità di modifiche",
-                "Approvazione definitiva"
-            ],
-            duration: "1-2 giorni",
-            gradient: "from-orange-500 to-red-600"
-        },
-        {
-            id: 5,
-            title: "Produzione",
-            subtitle: "Stampa con tecnologie avanzate",
-            description: "Avviamo la produzione utilizzando le migliori tecnologie di stampa offset e digitale, con controllo qualità costante.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2m-7 10l2 2 4-4" />
-                </svg>
-            ),
-            details: [
-                "Stampa con macchine professionali",
-                "Controllo qualità in tempo reale",
-                "Utilizzo di inchiostri premium",
-                "Monitoraggio di ogni fase"
-            ],
-            duration: "1-5 giorni",
-            gradient: "from-teal-500 to-cyan-600"
-        },
-        {
-            id: 6,
-            title: "Finiture e Lavorazioni",
-            subtitle: "L'arte del dettaglio",
-            description: "Applichiamo tutte le lavorazioni speciali: taglio, piega, plastificazione, rilegatura e ogni finitura richiesta.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-            ),
-            details: [
-                "Taglio di precisione",
-                "Plastificazione e verniciature",
-                "Rilegature personalizzate",
-                "Finiture speciali su richiesta"
-            ],
-            duration: "1-3 giorni",
-            gradient: "from-pink-500 to-rose-600"
-        },
-        {
-            id: 7,
-            title: "Controllo Qualità",
-            subtitle: "Perfezione garantita",
-            description: "Ogni pezzo viene ispezionato individualmente per garantire la massima qualità prima della consegna finale.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-            ),
-            details: [
-                "Ispezione qualità su ogni pezzo",
-                "Verifica conformità specifiche",
-                "Controllo finale pre-consegna",
-                "Garanzia soddisfazione 100%"
-            ],
-            duration: "2-4h",
-            gradient: "from-emerald-500 to-teal-600"
-        },
-        {
-            id: 8,
-            title: "Confezionamento e Consegna",
-            subtitle: "Cura fino alla destinazione",
-            description: "Confezioniamo tutto con cura per proteggere il lavoro durante il trasporto e consegniamo puntualmente.",
-            icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 1L5.5 3M15 1l3.5 2" />
-                </svg>
-            ),
-            details: [
-                "Imballaggio professionale",
-                "Protezione durante il trasporto",
-                "Consegna nei tempi concordati",
-                "Tracking e comunicazione costante"
-            ],
-            duration: "Stesso giorno",
-            gradient: "from-indigo-500 to-purple-600"
-        }
-    ];
 
     return (
         <section

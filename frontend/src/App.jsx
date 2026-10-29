@@ -17,6 +17,7 @@ import AdminDashboard from "./components/admin/AdminDashboard.jsx";
 import AdminQuotes from "./components/admin/AdminQuotes.jsx";
 import AdminNewsletter from "./components/admin/AdminNewsletter.jsx";
 import AdminUsers from "./components/admin/AdminUsers.jsx";
+import AdminAudit from "./components/admin/AdminAudit.jsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
 
 
@@ -42,6 +43,14 @@ export default function App() {
                     element={
                         <ProtectedRoute requiredRole="superadmin">
                             <AdminUsers />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="audit"
+                    element={
+                        <ProtectedRoute requiredRole="superadmin">
+                            <AdminAudit />
                         </ProtectedRoute>
                     }
                 />

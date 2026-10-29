@@ -5,6 +5,7 @@ const {
     idRule,
     updateStatusRules,
     respondRules,
+    pricingRules,
     handleValidation
 } = require('../validators/quotes.validator');
 
@@ -17,6 +18,8 @@ router.get('/', controller.list);
 router.get('/stats', controller.stats);
 router.get('/:id', idRule, handleValidation, controller.getOne);
 router.patch('/:id/status', updateStatusRules, handleValidation, controller.updateStatus);
+router.patch('/:id/pricing', pricingRules, handleValidation, controller.updatePricing);
+router.post('/:id/analyze', idRule, handleValidation, controller.analyze);
 router.post('/:id/respond', respondRules, handleValidation, controller.respond);
 router.delete('/:id', idRule, handleValidation, controller.remove);
 

@@ -1,16 +1,5 @@
 import { useState } from 'react';
-
-const RULES = [
-    { key: 'len', label: 'Almeno 10 caratteri', test: v => v.length >= 10 },
-    { key: 'upper', label: 'Almeno una maiuscola', test: v => /[A-Z]/.test(v) },
-    { key: 'lower', label: 'Almeno una minuscola', test: v => /[a-z]/.test(v) },
-    { key: 'digit', label: 'Almeno un numero', test: v => /\d/.test(v) },
-    { key: 'special', label: 'Almeno un carattere speciale', test: v => /[^A-Za-z0-9]/.test(v) }
-];
-
-export function isPasswordValid(value) {
-    return RULES.every(r => r.test(value || ''));
-}
+import { PASSWORD_RULES } from '../../utils/password';
 
 export default function PasswordField({ value, onChange, label = 'Password', name = 'password', autoComplete = 'new-password', showRules = true, disabled }) {
     const [show, setShow] = useState(false);
@@ -50,7 +39,7 @@ export default function PasswordField({ value, onChange, label = 'Password', nam
 
             {showRules && (
                 <ul className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs">
-                    {RULES.map(r => {
+                    {PASSWORD_RULES.map(r => {
                         const ok = r.test(value || '');
                         return (
                             <li key={r.key} className={`flex items-center gap-1.5 ${ok ? 'text-emerald-600' : 'text-slate-400'}`}>

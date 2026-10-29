@@ -14,7 +14,21 @@ const app = express();
 
 app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            frameAncestors: ["'none'"]
+        }
+    },
+    crossOriginEmbedderPolicy: false
+}));
 app.use(corsMiddleware);
 app.use(express.json({ limit: config.body.limit }));
 app.use(express.urlencoded({ extended: true, limit: config.body.limit }));

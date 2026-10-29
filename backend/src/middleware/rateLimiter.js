@@ -36,4 +36,16 @@ const newsletterLimiter = rateLimit({
     }
 });
 
-module.exports = { preventivoLimiter, loginLimiter, newsletterLimiter };
+const adminLimiter = rateLimit({
+    windowMs: config.rateLimit.windowMs,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        code: 'RATE_LIMITED',
+        message: 'Troppe richieste all\'area admin da questo IP, riprova tra qualche minuto.'
+    }
+});
+
+module.exports = { preventivoLimiter, loginLimiter, newsletterLimiter, adminLimiter };

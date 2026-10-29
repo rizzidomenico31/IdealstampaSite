@@ -5,7 +5,6 @@ import Footer from "./Footer.jsx";
 
 export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
     const [businessStatus, setBusinessStatus] = useState({
         isOpen: false,
         message: ''
@@ -46,19 +45,9 @@ export default function Nav() {
     };
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
-        };
-
         calculateBusinessStatus();
         const interval = setInterval(calculateBusinessStatus, 60000);
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            clearInterval(interval);
-            window.removeEventListener('scroll', handleScroll);
-        };
+        return () => clearInterval(interval);
     }, []);
 
     const handleLinkClick = () => {

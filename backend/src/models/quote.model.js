@@ -44,6 +44,33 @@ const quoteSchema = new mongoose.Schema(
             sentAt: Date,
             by: String
         },
+
+        // Dati commerciali (prezzo e costi)
+        pricing: {
+            unitPrice: { type: Number, min: 0 },        // prezzo unitario stimato/venduto (€)
+            setupCost: { type: Number, min: 0 },          // eventuali costi di impostazione (€)
+            discount: { type: Number, min: 0, max: 100 }, // sconto percentuale applicato
+            finalTotal: { type: Number, min: 0 },         // totale finale (€)
+            currency: { type: String, default: 'EUR' }
+        },
+
+        // Analisi AI del mercato/preventivo
+        aiAnalysis: {
+            status: {
+                type: String,
+                enum: ['none', 'pending', 'completed', 'failed'],
+                default: 'none'
+            },
+            estimatedMarketPriceMin: Number,
+            estimatedMarketPriceMax: Number,
+            confidence: { type: String, enum: ['low', 'medium', 'high'] },
+            reasoning: String,
+            factors: [String],
+            warnings: [String],
+            generatedAt: Date,
+            error: String
+        },
+
         meta: {
             ip: String,
             userAgent: String
