@@ -1,5 +1,5 @@
 # backend/Dockerfile
-FROM node:18-alpine
+FROM node:25-alpine
 
 # Installa curl per health checks
 RUN apk add --no-cache curl
