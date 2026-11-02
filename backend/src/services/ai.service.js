@@ -205,8 +205,14 @@ function isAllowedSource(fonte, domains) {
     return domains.some(d => f.includes(d) || f.includes(d.split('.')[0]));
 }
 
+// Modelli che ragionano prima di rispondere (famiglie o*, gpt-5*, gpt-6*)
+function isReasoningModel(model) {
+    return /^(o\d|gpt-[5-9])/i.test(String(model));
+}
+
 function buildSearchRequest(spec, quantita, withFilters) {
     const s = config.openai.search;
+    const reasoning = isReasoningModel(s.model);
     const sitesLine = withFilters ? '' : `\nCerca SOLO su questi siti: ${s.domains.join(', ')}.`;
 
     const input = `Trova il prezzo attuale di vendita online per: ${specToText(spec)}. Quantità: ${quantita} pezzi (o la più vicina disponibile).${sitesLine}
@@ -221,13 +227,15 @@ Includi solo prezzi letti davvero sulle pagine, max 4 offerte. Se non trovi prez
     };
     if (withFilters) tool.filters = { allowed_domains: s.domains };
 
-    return {
+    const request = {
         model: s.model,
         input,
         tools: [tool],
         tool_choice: 'required',
-        max_output_tokens: s.maxTokens
+        max_output_tokens: s.maxTokens ?? (reasoning ? 2000 : 600)
     };
+    if (reasoning) request.reasoning = { effort: s.reasoningEffort };
+    return request;
 }
 
 /**
@@ -251,7 +259,12 @@ async function searchWebPrices(spec, quantita) {
     const output = Array.isArray(data.output) ? data.output : [];
     const message = output.find(o => o.type === 'message');
     const textPart = message?.content?.find(c => c.type === 'output_text');
-    if (!textPart?.text) throw new Error('Risposta ricerca web vuota');
+    if (!textPart?.text) {
+        if (data.status === 'incomplete' && data.incomplete_details?.reason === 'max_output_tokens') {
+            throw new Error('Ricerca web interrotta: limite token di output raggiunto (aumenta OPENAI_SEARCH_MAX_TOKENS)');
+        }
+        throw new Error('Risposta ricerca web vuota');
+    }
 
     const parsed = parseJsonLoose(textPart.text);
     const offers = (Array.isArray(parsed.offerte) ? parsed.offerte : [])
