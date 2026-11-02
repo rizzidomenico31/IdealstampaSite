@@ -18,6 +18,7 @@ import AdminQuotes from "./components/admin/AdminQuotes.jsx";
 import AdminNewsletter from "./components/admin/AdminNewsletter.jsx";
 import AdminUsers from "./components/admin/AdminUsers.jsx";
 import AdminAudit from "./components/admin/AdminAudit.jsx";
+import AdminReferencePrices from "./components/admin/AdminReferencePrices.jsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
 
 
@@ -37,6 +38,7 @@ export default function App() {
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="quotes" element={<AdminQuotes />} />
+                <Route path="prices" element={<AdminReferencePrices />} />
                 <Route path="newsletter" element={<AdminNewsletter />} />
                 <Route
                     path="users"

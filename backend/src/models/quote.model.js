@@ -54,6 +54,19 @@ const quoteSchema = new mongoose.Schema(
             currency: { type: String, default: 'EUR' }
         },
 
+        // Specifiche tecniche compilate/corrette dall'operatore (base dell'analisi AI)
+        spec: {
+            prodotto: { type: String, trim: true, maxlength: 120 },
+            formato: { type: String, trim: true, maxlength: 60 },
+            carta: { type: String, trim: true, maxlength: 80 },
+            grammatura: { type: Number, min: 0, max: 2000 },
+            colori: { type: String, trim: true, maxlength: 20 },
+            finiture: { type: String, trim: true, maxlength: 200 },
+            consegna: { type: String, trim: true, maxlength: 80 }
+        },
+        // Informazioni aggiuntive dell'operatore per dare contesto al modello
+        operatorContext: { type: String, trim: true, maxlength: 1500 },
+
         // Analisi AI del mercato/preventivo
         aiAnalysis: {
             status: {
@@ -67,6 +80,16 @@ const quoteSchema = new mongoose.Schema(
             reasoning: String,
             factors: [String],
             warnings: [String],
+            sources: [{ _id: false, url: String, title: String }],
+            referencesUsed: Number,
+            usedWebSearch: Boolean,
+            // Hash dell'input: se non cambia, la stima viene riutilizzata senza chiamare l'API
+            inputHash: String,
+            usage: {
+                inputTokens: Number,
+                outputTokens: Number,
+                webSearches: Number
+            },
             generatedAt: Date,
             error: String
         },

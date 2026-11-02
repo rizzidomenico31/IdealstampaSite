@@ -16,12 +16,13 @@ const auditSchema = new mongoose.Schema(
                 'login', 'logout', 'login_failed', 'password_changed',
                 'quote_viewed', 'quote_status_changed', 'quote_pricing_updated', 'quote_analyzed',
                 'quote_responded', 'quote_deleted',
+                'reference_price_created', 'reference_price_deleted',
                 'newsletter_sent', 'subscriber_deleted',
                 'admin_created', 'admin_updated', 'admin_password_reset', 'admin_deleted'
             ]
         },
         target: {
-            type: { type: String, enum: ['quote', 'admin', 'subscriber', 'system'] },
+            type: { type: String, enum: ['quote', 'admin', 'subscriber', 'reference_price', 'system'] },
             id: String,
             summary: String
         },

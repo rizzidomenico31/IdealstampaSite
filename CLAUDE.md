@@ -59,6 +59,10 @@ Entry: `server.js` → `bootstrap()` connects Mongo (optional), verifies the mai
 - `POST /preventivo`
 - `POST /admin/auth/login|logout`, `GET /admin/auth/me`, `POST /admin/auth/change-password`
 - `GET|POST /admin/users`, `PATCH|DELETE /admin/users/:id`, `POST /admin/users/:id/password` (superadmin)
+- `POST /admin/quotes/:id/analyze` (body `{ spec, operatorContext, webSearch }`), `POST /admin/quotes/:id/extract-spec`
+- `GET|POST /admin/reference-prices`, `DELETE /admin/reference-prices/:id`
+
+**AI pricing (`ai.service` + `reference-prices.service`):** the operator fills structured `spec` + free-text `operatorContext` before analysis. Optional web search (OpenAI Responses API, `web_search` tool restricted to `OPENAI_SEARCH_DOMAINS`) stores results in the `reference_prices` collection keyed by normalized spec + quantity bucket, reused until `validUntil` (manual entries never expire). The final estimate uses a compact payload (no client PII, emails/phones redacted from the note) with strict Structured Outputs; if the input hash is unchanged the previous estimate is reused without an API call.
 
 ## Frontend architecture
 
