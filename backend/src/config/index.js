@@ -81,11 +81,15 @@ const config = {
         baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
         maxTokens: toInt(process.env.OPENAI_MAX_TOKENS, 400),
         temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.3'),
-        timeoutMs: toInt(process.env.OPENAI_TIMEOUT_MS, 60 * 1000),
+        timeoutMs: toInt(process.env.OPENAI_TIMEOUT_MS, 90 * 1000),
         // Ricerca web (Responses API, tool web_search) — usata solo su richiesta dell'operatore
         search: {
-            model: process.env.OPENAI_SEARCH_MODEL || 'gpt-4.1-mini',
-            maxTokens: toInt(process.env.OPENAI_SEARCH_MAX_TOKENS, 600),
+            model: process.env.OPENAI_SEARCH_MODEL || 'gpt-5-mini',
+            // Se non impostato: 2000 per i modelli di ragionamento (i token di ragionamento
+            // rientrano nel limite di output), 600 per gli altri
+            maxTokens: toInt(process.env.OPENAI_SEARCH_MAX_TOKENS, null),
+            // Solo per modelli di ragionamento: 'low' | 'medium' | 'high' ('minimal' non supporta web_search)
+            reasoningEffort: process.env.OPENAI_SEARCH_REASONING || 'low',
             contextSize: process.env.OPENAI_SEARCH_CONTEXT_SIZE || 'low',
             domains: (process.env.OPENAI_SEARCH_DOMAINS || [
                 'pixartprinting.it',
