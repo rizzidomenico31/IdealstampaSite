@@ -22,6 +22,23 @@ const pricingRules = [
     body('finalTotal').optional().isFloat({ min: 0 }).withMessage('Totale non valido')
 ];
 
+const specString = (field, max) =>
+    body(`spec.${field}`).optional({ nullable: true }).isString().trim().isLength({ max }).withMessage(`Campo ${field} non valido (max ${max} caratteri)`);
+
+const analyzeRules = [
+    ...idRule,
+    body('webSearch').optional().isBoolean().withMessage('webSearch deve essere booleano'),
+    body('operatorContext').optional({ nullable: true }).isString().trim().isLength({ max: 1500 }).withMessage('Contesto troppo lungo (max 1500 caratteri)'),
+    body('spec').optional().isObject().withMessage('Specifiche non valide'),
+    specString('prodotto', 120),
+    specString('formato', 60),
+    specString('carta', 80),
+    specString('colori', 20),
+    specString('finiture', 200),
+    specString('consegna', 80),
+    body('spec.grammatura').optional({ checkFalsy: true }).isFloat({ min: 0, max: 2000 }).withMessage('Grammatura non valida')
+];
+
 function handleValidation(req, res, next) {
     const errors = validationResult(req);
     if (errors.isEmpty()) return next();
@@ -32,4 +49,4 @@ function handleValidation(req, res, next) {
     });
 }
 
-module.exports = { idRule, updateStatusRules, respondRules, pricingRules, handleValidation };
+module.exports = { idRule, updateStatusRules, respondRules, pricingRules, analyzeRules, handleValidation };

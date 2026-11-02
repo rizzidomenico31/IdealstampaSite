@@ -87,12 +87,28 @@ export const quotesApi = {
         apiFetch(`/api/admin/quotes/${id}/status`, { method: 'PATCH', auth: true, body: { status } }),
     updatePricing: (id, pricing) =>
         apiFetch(`/api/admin/quotes/${id}/pricing`, { method: 'PATCH', auth: true, body: pricing }),
-    analyze: (id) =>
-        apiFetch(`/api/admin/quotes/${id}/analyze`, { method: 'POST', auth: true }),
+    analyze: (id, { spec, operatorContext, webSearch } = {}) =>
+        apiFetch(`/api/admin/quotes/${id}/analyze`, { method: 'POST', auth: true, body: { spec, operatorContext, webSearch } }),
+    extractSpec: (id) =>
+        apiFetch(`/api/admin/quotes/${id}/extract-spec`, { method: 'POST', auth: true }),
     respond: (id, { subject, message }) =>
         apiFetch(`/api/admin/quotes/${id}/respond`, { method: 'POST', auth: true, body: { subject, message } }),
     remove: (id) =>
         apiFetch(`/api/admin/quotes/${id}`, { method: 'DELETE', auth: true })
+};
+
+// Listino prezzi di riferimento (prezzi web in cache + prezzi manuali)
+export const referencePricesApi = {
+    list: (params = {}) => {
+        const qs = new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+        ).toString();
+        return apiFetch(`/api/admin/reference-prices${qs ? `?${qs}` : ''}`, { auth: true });
+    },
+    create: ({ spec, quantita, priceMin, priceMax, note }) =>
+        apiFetch('/api/admin/reference-prices', { method: 'POST', auth: true, body: { spec, quantita, priceMin, priceMax, note } }),
+    remove: (id) =>
+        apiFetch(`/api/admin/reference-prices/${id}`, { method: 'DELETE', auth: true })
 };
 
 export const analyticsApi = {

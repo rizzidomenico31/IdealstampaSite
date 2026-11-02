@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { quotesApi } from '../../services/api';
 import Modal from './Modal';
+import SpecFields from './SpecFields';
+import { specToPayload } from './specUtils';
 import { STATUS, STATUS_KEYS, formatDate } from './quoteStatus';
 
 function StatusBadge({ status }) {
@@ -15,6 +17,12 @@ function StatusBadge({ status }) {
 function currency(n) {
     if (n === null || n === undefined || Number.isNaN(n)) return '—';
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(n);
+}
+
+function formatSpec(spec = {}) {
+    return [spec.prodotto, spec.formato, spec.carta, spec.grammatura && `${spec.grammatura}g`, spec.colori, spec.finiture]
+        .filter(Boolean)
+        .join(' · ');
 }
 
 export default function AdminQuotes() {
@@ -244,6 +252,7 @@ function DetailModal({ quote, onClose, onChanged, onRespond, onPricing, onAnalyz
                 <Section title="Richiesta">
                     <Info label="Quantità" value={`${quote.quantita?.toLocaleString('it-IT')} pezzi`} />
                     <Info label="File allegato" value={quote.file ? (quote.file.originalName || 'File allegato') : 'Nessuno'} />
+                    {quote.spec?.prodotto && <Info label="Specifiche" value={formatSpec(quote.spec)} />}
                 </Section>
 
                 <PricingSection quote={quote} onEdit={() => onPricing(quote)} />
@@ -359,10 +368,29 @@ function AiSection({ quote, onAnalyze }) {
                     ))}
                 </div>
             )}
+            {a.sources?.length > 0 && (
+                <div className="pt-1">
+                    <div className="text-xs font-medium text-slate-500 mb-0.5">Fonti consultate</div>
+                    <ul className="text-xs space-y-0.5">
+                        {a.sources.map((s, i) => (
+                            <li key={i} className="truncate">
+                                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-indigo-700 hover:underline">{s.title || s.url}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             {a.status === 'failed' && a.error && (
                 <div className="text-xs text-red-700">Errore: {a.error}</div>
             )}
-            <button onClick={onAnalyze} className="text-xs text-indigo-700 hover:text-indigo-900 font-medium">Ricalcola stima</button>
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <button onClick={onAnalyze} className="text-xs text-indigo-700 hover:text-indigo-900 font-medium">Ricalcola stima</button>
+                <span className="text-[11px] text-slate-400">
+                    {a.referencesUsed > 0 ? `${a.referencesUsed} prezzi di riferimento` : 'Nessun prezzo di riferimento'}
+                    {a.usedWebSearch ? ' · ricerca web' : ''}
+                    {a.usage ? ` · ${((a.usage.inputTokens || 0) + (a.usage.outputTokens || 0)).toLocaleString('it-IT')} token` : ''}
+                </span>
+            </div>
         </div>
     );
 }
@@ -467,45 +495,118 @@ function PricingModal({ quote, onClose, onSaved }) {
 
 // ───────────────────────────── Analyze AI
 function AnalyzeModal({ quote, onClose, onSaved }) {
+    const [spec, setSpec] = useState({});
+    const [operatorContext, setOperatorContext] = useState('');
+    const [webSearch, setWebSearch] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
+    const [extracting, setExtracting] = useState(false);
     const [error, setError] = useState('');
 
-    useEffect(() => { if (quote) { setError(''); } }, [quote]);
+    useEffect(() => {
+        if (quote) {
+            setSpec(quote.spec || {});
+            setOperatorContext(quote.operatorContext || '');
+            setWebSearch(false);
+            setError('');
+        }
+    }, [quote]);
 
     if (!quote) return null;
 
-    const run = async () => {
+    const busy = analyzing || extracting;
+    const hasProduct = Boolean(String(spec.prodotto || '').trim());
+
+    const extract = async () => {
+        setExtracting(true);
+        setError('');
+        try {
+            const res = await quotesApi.extractSpec(quote.id);
+            // I campi già compilati dall'operatore hanno la precedenza
+            setSpec(prev => ({ ...res.spec, ...specToPayload(prev) }));
+        } catch (err) {
+            setError(err.message || 'Errore estrazione specifiche');
+        } finally {
+            setExtracting(false);
+        }
+    };
+
+    const run = async (e) => {
+        e.preventDefault();
         setAnalyzing(true);
         setError('');
         try {
-            const res = await quotesApi.analyze(quote.id);
+            const res = await quotesApi.analyze(quote.id, {
+                spec: specToPayload(spec),
+                operatorContext,
+                webSearch: webSearch && hasProduct
+            });
             onSaved(res.quote);
         } catch (err) {
             setError(err.message || 'Errore analisi AI');
+        } finally {
             setAnalyzing(false);
         }
     };
 
     return (
-        <Modal open={Boolean(quote)} onClose={onClose} title="Analisi di mercato con AI" size="md">
-            <div className="space-y-4">
-                <p className="text-sm text-slate-600">
-                    L'AI confronta questo preventivo con richieste simili e con i prezzi di mercato tipici della tipografia italiana per stimare una fascia di prezzo competitiva.
-                </p>
+        <Modal open={Boolean(quote)} onClose={busy ? () => {} : onClose} title="Analisi di mercato con AI" size="xl">
+            <form onSubmit={run} className="space-y-4">
                 <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700">
-                    <strong>Cliente:</strong> {quote.nome} {quote.cognome}<br />
                     <strong>Quantità:</strong> {quote.quantita?.toLocaleString('it-IT')} pz<br />
-                    <strong>Note:</strong> {quote.note?.substring(0, 120)}{quote.note?.length > 120 ? '...' : ''}
+                    <strong>Richiesta del cliente:</strong>
+                    <div className="mt-1 max-h-24 overflow-y-auto whitespace-pre-wrap text-slate-600">{quote.note}</div>
                 </div>
+
+                <div>
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Specifiche tecniche</div>
+                        <button
+                            type="button" onClick={extract} disabled={busy}
+                            className="text-xs font-medium text-indigo-700 hover:text-indigo-900 disabled:opacity-50 inline-flex items-center gap-1.5"
+                        >
+                            {extracting && <span className="w-3 h-3 border-2 border-indigo-300 border-t-indigo-700 rounded-full animate-spin" />}
+                            Compila dalla richiesta (AI)
+                        </button>
+                    </div>
+                    <SpecFields value={spec} onChange={setSpec} />
+                    <p className="mt-1.5 text-xs text-slate-500">Più specifiche compili, più la stima è precisa. Le specifiche vengono salvate sul preventivo.</p>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Contesto per l'AI</label>
+                    <textarea
+                        value={operatorContext} onChange={(e) => setOperatorContext(e.target.value)} rows={3} maxLength={1500}
+                        placeholder="es. cliente abituale, applicare prezzo competitivo; file già pronto per la stampa; serve entro venerdì..."
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm resize-none"
+                    />
+                </div>
+
+                <label className={`flex items-start gap-3 p-3 rounded-lg border ${hasProduct ? 'border-slate-200 cursor-pointer hover:bg-slate-50' : 'border-slate-100 opacity-60 cursor-not-allowed'}`}>
+                    <input
+                        type="checkbox" checked={webSearch && hasProduct} disabled={!hasProduct}
+                        onChange={(e) => setWebSearch(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span className="text-sm">
+                        <span className="font-medium text-slate-800">Cerca prezzi reali online</span>
+                        <span className="block text-xs text-slate-500 mt-0.5">
+                            {hasProduct
+                                ? 'Consulta i siti di stampa online configurati. Consuma più token: i risultati vengono salvati nel listino e riutilizzati per richieste simili.'
+                                : 'Indica almeno il prodotto per abilitare la ricerca.'}
+                        </span>
+                    </span>
+                </label>
+
                 {error && <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+
                 <div className="flex justify-end gap-2 pt-2">
-                    <button onClick={onClose} disabled={analyzing} className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition text-sm disabled:opacity-60">Chiudi</button>
-                    <button onClick={run} disabled={analyzing} className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white text-sm font-medium shadow-md shadow-indigo-500/20 transition disabled:opacity-60 inline-flex items-center gap-2">
+                    <button type="button" onClick={onClose} disabled={busy} className="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition text-sm disabled:opacity-60">Chiudi</button>
+                    <button type="submit" disabled={busy} className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-white text-sm font-medium shadow-md shadow-indigo-500/20 transition disabled:opacity-60 inline-flex items-center gap-2">
                         {analyzing && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
-                        {analyzing ? 'Analisi in corso...' : 'Avvia analisi'}
+                        {analyzing ? (webSearch && hasProduct ? 'Ricerca prezzi in corso...' : 'Analisi in corso...') : 'Avvia analisi'}
                     </button>
                 </div>
-            </div>
+            </form>
         </Modal>
     );
 }

@@ -70,18 +70,33 @@ async function updatePricing(req, res, next) {
 
 async function analyze(req, res, next) {
     try {
-        const quote = await quotesService.analyzeQuote(req.params.id);
+        const { spec, operatorContext, webSearch } = req.body || {};
+        const { quote, cached } = await quotesService.analyzeQuote(req.params.id, {
+            spec,
+            operatorContext,
+            webSearch: webSearch === true || webSearch === 'true'
+        });
         await auditService.log({
             actor: req.admin,
             action: 'quote_analyzed',
-            target: { type: 'quote', id: quote.id, summary: 'Analisi AI eseguita' },
+            target: { type: 'quote', id: quote.id, summary: cached ? 'Analisi AI riutilizzata (input invariato)' : 'Analisi AI eseguita' },
             metadata: {
                 aiStatus: quote.aiAnalysis?.status,
-                confidence: quote.aiAnalysis?.confidence
+                confidence: quote.aiAnalysis?.confidence,
+                webSearch: Boolean(quote.aiAnalysis?.usedWebSearch),
+                usage: quote.aiAnalysis?.usage,
+                cached
             },
             req
         });
-        res.json({ success: true, quote });
+        res.json({ success: true, quote, cached });
+    } catch (err) { return handleServiceError(err, res, next); }
+}
+
+async function extractSpec(req, res, next) {
+    try {
+        const result = await quotesService.extractSpec(req.params.id);
+        res.json({ success: true, spec: result.spec, local: result.local });
     } catch (err) { return handleServiceError(err, res, next); }
 }
 
@@ -116,4 +131,4 @@ async function remove(req, res, next) {
     } catch (err) { return handleServiceError(err, res, next); }
 }
 
-module.exports = { list, stats, getOne, updateStatus, updatePricing, analyze, respond, remove };
+module.exports = { list, stats, getOne, updateStatus, updatePricing, analyze, extractSpec, respond, remove };

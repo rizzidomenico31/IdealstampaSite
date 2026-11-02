@@ -1,6 +1,7 @@
 const database = require('../config/database');
 const emailService = require('./email.service');
 const aiService = require('./ai.service');
+const referencePrices = require('./reference-prices.service');
 const logger = require('../utils/logger');
 
 const VALID_STATUSES = ['pending', 'processing', 'quoted', 'accepted', 'rejected', 'archived'];
@@ -33,40 +34,46 @@ async function findOrThrow(id) {
     return quote;
 }
 
+function escapeRegex(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function buildSimilarityFilter(quote) {
-    // Trova preventivi simili: stessa email, parola chiave prodotto, o range quantità simile
-    const category = aiService.detectProductCategory(quote.note);
+    // Trova preventivi simili: stessa email, stesso prodotto, parola chiave prodotto, o range quantità simile
+    const category = aiService.detectProductCategory(`${quote.spec?.prodotto || ''} ${quote.note || ''}`);
     const quantita = Number(quote.quantita) || 0;
     const filters = [];
 
     if (quote.email) {
-        filters.push({ email: quote.email, _id: { $ne: quote._id } });
+        filters.push({ email: quote.email });
     }
 
-    const textQuery = category
-        ? { note: { $regex: category.split(' ').join('|'), $options: 'i' }, _id: { $ne: quote._id } }
-        : null;
+    if (quote.spec?.prodotto) {
+        filters.push({ 'spec.prodotto': { $regex: escapeRegex(quote.spec.prodotto), $options: 'i' } });
+    }
 
-    const qtyQuery = quantita > 0
-        ? { quantita: { $gte: Math.floor(quantita * 0.5), $lte: Math.ceil(quantita * 2) }, _id: { $ne: quote._id } }
-        : null;
+    if (category) {
+        filters.push({ note: { $regex: category.split(' ').join('|'), $options: 'i' } });
+    }
 
-    if (textQuery) filters.push(textQuery);
-    if (qtyQuery) filters.push(qtyQuery);
+    if (quantita > 0) {
+        filters.push({ quantita: { $gte: Math.floor(quantita * 0.5), $lte: Math.ceil(quantita * 2) } });
+    }
+
     return filters;
 }
 
-async function findSimilarQuotes(quote, limit = 10) {
+/** Preventivi simili già prezzati: solo quelli con un totale servono come riferimento. */
+async function findSimilarQuotes(quote, limit = 3) {
     const Quote = getModel();
     const filters = buildSimilarityFilter(quote);
     if (filters.length === 0) return [];
 
-    const results = await Quote.find({ $or: filters })
+    return Quote.find({ _id: { $ne: quote._id }, 'pricing.finalTotal': { $gt: 0 }, $or: filters })
+        .select('quantita note spec pricing.finalTotal')
         .sort({ createdAt: -1 })
         .limit(limit)
         .lean();
-
-    return results;
 }
 
 async function listQuotes({ status, search, page = 1, limit = 50 } = {}) {
@@ -155,20 +162,84 @@ async function updatePricing(id, { unitPrice, setupCost, discount, finalTotal })
     return serialize(quote.toObject());
 }
 
-async function analyzeQuote(id) {
-    const Quote = getModel();
+const SPEC_FIELDS = ['prodotto', 'formato', 'carta', 'grammatura', 'colori', 'finiture', 'consegna'];
+
+function sanitizeSpec(spec = {}) {
+    const out = {};
+    for (const f of SPEC_FIELDS) {
+        const v = spec[f];
+        if (v === undefined || v === null || v === '') continue;
+        out[f] = f === 'grammatura' ? Number(v) : String(v).trim();
+    }
+    return out;
+}
+
+/** Specifiche suggerite dalla nota del cliente (non salvate: l'operatore le rivede prima). */
+async function extractSpec(id) {
+    const quote = await findOrThrow(id);
+    try {
+        return await aiService.extractSpec(quote.note, quote.quantita);
+    } catch (err) {
+        logger.error('Estrazione specifiche fallita:', err.message);
+        throw new ServiceError('Estrazione specifiche non riuscita. Compilale a mano.', 502, 'AI_FAILED');
+    }
+}
+
+/**
+ * Analisi prezzo: salva spec/contesto dell'operatore, consulta il listino di riferimento,
+ * esegue la ricerca web solo se richiesta e non già in cache, poi chiede la stima finale.
+ */
+async function analyzeQuote(id, { spec, operatorContext, webSearch = false } = {}) {
     const quote = await findOrThrow(id);
 
-    quote.aiAnalysis = { status: 'pending' };
+    if (spec !== undefined) quote.spec = sanitizeSpec(spec);
+    if (operatorContext !== undefined) quote.operatorContext = String(operatorContext || '').trim();
+
+    const q = quote.toObject();
+    const hasSpec = Boolean(q.spec?.prodotto);
+
+    if (webSearch && !hasSpec) {
+        throw new ServiceError('Per la ricerca web indica almeno il prodotto nelle specifiche', 400, 'MISSING_SPEC');
+    }
+
+    const extraWarnings = [];
+    let searchUsage = null;
+
+    if (webSearch) {
+        const cachedRef = await referencePrices.findExact(q.spec, q.quantita);
+        if (!cachedRef) {
+            try {
+                const web = await aiService.searchWebPrices(q.spec, q.quantita);
+                await referencePrices.saveWebResult(q.spec, q.quantita, web);
+                searchUsage = web.usage;
+                if (web.priceMin === null) {
+                    extraWarnings.push('Ricerca web: nessun prezzo affidabile trovato per questa quantità.');
+                }
+            } catch (err) {
+                logger.error('Ricerca prezzi web fallita:', err.message);
+                extraWarnings.push('Ricerca web non riuscita, stima basata su listino e storico.');
+            }
+        } else if (!cachedRef.found) {
+            extraWarnings.push('Una ricerca web recente non ha trovato prezzi: non viene ripetuta fino alla scadenza.');
+        }
+    }
+
+    const references = hasSpec ? await referencePrices.findForProduct(q.spec, q.quantita, 4) : [];
+    const history = await findSimilarQuotes(q, 3);
+
+    const { analysis, cached } = await aiService.analyzeQuote({
+        quote: q,
+        references,
+        history,
+        previous: q.aiAnalysis,
+        searchUsage,
+        extraWarnings
+    });
+
+    if (!cached) quote.aiAnalysis = analysis;
     await quote.save();
 
-    const similar = await findSimilarQuotes(quote.toObject(), 10);
-    const analysis = await aiService.analyzeQuote(quote.toObject(), similar);
-
-    quote.aiAnalysis = analysis;
-    await quote.save();
-
-    return serialize(quote.toObject());
+    return { quote: serialize(quote.toObject()), cached };
 }
 
 async function respond(id, { subject, message }, adminUsername) {
@@ -223,6 +294,8 @@ function serialize(q) {
         file: q.file || null,
         status: q.status,
         pricing: q.pricing || null,
+        spec: q.spec || null,
+        operatorContext: q.operatorContext || '',
         aiAnalysis: q.aiAnalysis || null,
         adminResponse: q.adminResponse || null,
         createdAt: q.createdAt,
@@ -237,6 +310,7 @@ module.exports = {
     updateStatus,
     updatePricing,
     analyzeQuote,
+    extractSpec,
     findSimilarQuotes,
     respond,
     deleteQuote,

@@ -26,6 +26,12 @@ const quotesIcon = (
     </svg>
 );
 
+const pricesIcon = (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+    </svg>
+);
+
 const newsletterIcon = (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -36,6 +42,7 @@ function buildNavItems(role) {
     const items = [
         { to: '/admin/dashboard', label: 'Dashboard', icon: dashboardIcon },
         { to: '/admin/quotes', label: 'Preventivi', icon: quotesIcon },
+        { to: '/admin/prices', label: 'Listino prezzi', icon: pricesIcon },
         { to: '/admin/newsletter', label: 'Newsletter', icon: newsletterIcon }
     ];
     if (role === 'superadmin') {

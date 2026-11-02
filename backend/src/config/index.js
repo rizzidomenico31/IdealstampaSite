@@ -79,8 +79,32 @@ const config = {
         apiKey: process.env.OPENAI_API_KEY || '',
         model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
         baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
-        maxTokens: toInt(process.env.OPENAI_MAX_TOKENS, 1500),
-        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.3')
+        maxTokens: toInt(process.env.OPENAI_MAX_TOKENS, 400),
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.3'),
+        timeoutMs: toInt(process.env.OPENAI_TIMEOUT_MS, 60 * 1000),
+        // Ricerca web (Responses API, tool web_search) — usata solo su richiesta dell'operatore
+        search: {
+            model: process.env.OPENAI_SEARCH_MODEL || 'gpt-4.1-mini',
+            maxTokens: toInt(process.env.OPENAI_SEARCH_MAX_TOKENS, 600),
+            contextSize: process.env.OPENAI_SEARCH_CONTEXT_SIZE || 'low',
+            domains: (process.env.OPENAI_SEARCH_DOMAINS || [
+                'pixartprinting.it',
+                'flyeralarm.com',
+                'helloprint.it',
+                'vistaprint.it',
+                'stampaprint.net'
+            ].join(','))
+                .split(',')
+                .map(d => d.trim())
+                .filter(Boolean)
+        }
+    },
+
+    // Listino prezzi di riferimento (cache dei prezzi trovati online)
+    referencePrices: {
+        webTtlDays: toInt(process.env.REFERENCE_PRICE_TTL_DAYS, 14),
+        // Ricerche senza risultati: non ripetute per qualche giorno, per non sprecare token
+        emptyTtlDays: toInt(process.env.REFERENCE_PRICE_EMPTY_TTL_DAYS, 3)
     },
 
     audit: {

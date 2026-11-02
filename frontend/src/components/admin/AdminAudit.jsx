@@ -13,6 +13,8 @@ const ACTION_LABELS = {
     quote_analyzed: { label: 'Analisi AI', cls: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
     quote_responded: { label: 'Risposta inviata', cls: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
     quote_deleted: { label: 'Preventivo eliminato', cls: 'bg-red-100 text-red-700 border-red-200' },
+    reference_price_created: { label: 'Prezzo listino aggiunto', cls: 'bg-teal-100 text-teal-700 border-teal-200' },
+    reference_price_deleted: { label: 'Prezzo listino eliminato', cls: 'bg-red-100 text-red-700 border-red-200' },
     newsletter_sent: { label: 'Newsletter inviata', cls: 'bg-purple-100 text-purple-700 border-purple-200' },
     subscriber_deleted: { label: 'Iscritto eliminato', cls: 'bg-red-100 text-red-700 border-red-200' },
     admin_created: { label: 'Admin creato', cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' },

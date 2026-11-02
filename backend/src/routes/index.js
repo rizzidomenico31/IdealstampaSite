@@ -10,6 +10,7 @@ const newsletterRoutes = require('./newsletter.routes');
 const adminNewsletterRoutes = require('./admin-newsletter.routes');
 const analyticsRoutes = require('./analytics.routes');
 const auditRoutes = require('./audit.routes');
+const referencePricesRoutes = require('./reference-prices.routes');
 
 const router = express.Router();
 
@@ -27,5 +28,6 @@ router.use('/admin/quotes', quotesRoutes);
 router.use('/admin/newsletter', adminNewsletterRoutes);
 router.use('/admin/analytics', analyticsRoutes);
 router.use('/admin/audit', auditRoutes);
+router.use('/admin/reference-prices', referencePricesRoutes);
 
 module.exports = router;
