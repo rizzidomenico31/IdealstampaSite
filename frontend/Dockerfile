@@ -1,5 +1,5 @@
 # Stage di build: usa immagine base Debian compatibile
-FROM node:18 as build
+FROM node:26 as build
 
 # Imposta la working directory
 WORKDIR /app
