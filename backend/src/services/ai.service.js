@@ -190,31 +190,63 @@ async function extractSpec(note, quantita) {
 
 // ───────────────────────────── Ricerca prezzi reali online
 
+// Alcuni modelli non supportano il filtro domini del tool web_search: dopo il primo rifiuto
+// si passa ai domini indicati nel prompt + filtro locale, senza ripetere la chiamata fallita.
+let domainFilterSupported = true;
+
+function isAllowedHost(host, domains) {
+    const h = String(host || '').toLowerCase().replace(/^www\./, '');
+    return domains.some(d => h === d || h.endsWith(`.${d}`));
+}
+
+function isAllowedSource(fonte, domains) {
+    const f = String(fonte || '').toLowerCase();
+    // La "fonte" restituita dal modello può essere un dominio o il nome del sito
+    return domains.some(d => f.includes(d) || f.includes(d.split('.')[0]));
+}
+
+function buildSearchRequest(spec, quantita, withFilters) {
+    const s = config.openai.search;
+    const sitesLine = withFilters ? '' : `\nCerca SOLO su questi siti: ${s.domains.join(', ')}.`;
+
+    const input = `Trova il prezzo attuale di vendita online per: ${specToText(spec)}. Quantità: ${quantita} pezzi (o la più vicina disponibile).${sitesLine}
+Usa i configuratori/listini dei siti. Prezzi IVA esclusa, spedizione esclusa, consegna standard.
+Rispondi SOLO con JSON: {"offerte":[{"fonte":"dominio","totale":numero,"quantita":numero,"note":"max 60 caratteri"}]}
+Includi solo prezzi letti davvero sulle pagine, max 4 offerte. Se non trovi prezzi affidabili: {"offerte":[]}`;
+
+    const tool = {
+        type: 'web_search',
+        search_context_size: s.contextSize,
+        user_location: { type: 'approximate', country: 'IT' }
+    };
+    if (withFilters) tool.filters = { allowed_domains: s.domains };
+
+    return {
+        model: s.model,
+        input,
+        tools: [tool],
+        tool_choice: 'required',
+        max_output_tokens: s.maxTokens
+    };
+}
+
 /**
  * Cerca prezzi reali sui siti configurati (OPENAI_SEARCH_DOMAINS).
  * Al modello va solo la descrizione del prodotto: niente storico né dati cliente.
  */
 async function searchWebPrices(spec, quantita) {
     if (!config.openai.apiKey) throw new Error('OPENAI_API_KEY non configurata');
-    const s = config.openai.search;
+    const domains = config.openai.search.domains;
 
-    const input = `Trova il prezzo attuale di vendita online per: ${specToText(spec)}. Quantità: ${quantita} pezzi (o la più vicina disponibile).
-Usa i configuratori/listini dei siti. Prezzi IVA esclusa, spedizione esclusa, consegna standard.
-Rispondi SOLO con JSON: {"offerte":[{"fonte":"dominio","totale":numero,"quantita":numero,"note":"max 60 caratteri"}]}
-Includi solo prezzi letti davvero sulle pagine, max 4 offerte. Se non trovi prezzi affidabili: {"offerte":[]}`;
-
-    const data = await postOpenAI('/responses', {
-        model: s.model,
-        input,
-        tools: [{
-            type: 'web_search',
-            search_context_size: s.contextSize,
-            filters: { allowed_domains: s.domains },
-            user_location: { type: 'approximate', country: 'IT' }
-        }],
-        tool_choice: 'required',
-        max_output_tokens: s.maxTokens
-    });
+    let data;
+    try {
+        data = await postOpenAI('/responses', buildSearchRequest(spec, quantita, domainFilterSupported));
+    } catch (err) {
+        if (!domainFilterSupported || !/'filters' not supported/i.test(err.message)) throw err;
+        logger.warn(`Filtro domini non supportato da ${config.openai.search.model}: uso domini nel prompt + filtro locale`);
+        domainFilterSupported = false;
+        data = await postOpenAI('/responses', buildSearchRequest(spec, quantita, false));
+    }
 
     const output = Array.isArray(data.output) ? data.output : [];
     const message = output.find(o => o.type === 'message');
@@ -229,7 +261,7 @@ Includi solo prezzi letti davvero sulle pagine, max 4 offerte. Se non trovi prez
             quantita: Math.max(1, Number(o.quantita) || quantita),
             note: String(o.note || '').substring(0, 120)
         }))
-        .filter(o => o.totale > 0)
+        .filter(o => o.totale > 0 && isAllowedSource(o.fonte, domains))
         .slice(0, 4);
 
     // Fascia di prezzo riportata alla quantità richiesta (solo offerte con quantità vicina)
@@ -240,6 +272,9 @@ Includi solo prezzi letti davvero sulle pagine, max 4 offerte. Se non trovi prez
     const seen = new Set();
     const sources = (textPart.annotations || [])
         .filter(a => a.type === 'url_citation' && a.url && !seen.has(a.url) && seen.add(a.url))
+        .filter(a => {
+            try { return isAllowedHost(new URL(a.url).hostname, domains); } catch { return false; }
+        })
         .slice(0, 5)
         .map(a => ({ url: a.url, title: String(a.title || '').substring(0, 150) }));
 
